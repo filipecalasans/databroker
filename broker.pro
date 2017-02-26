@@ -35,10 +35,16 @@ CCFLAG += -pthread
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    protocol/data.pb.cc
+    protocol/data.pb.cc \
+    communication/communication.cpp \
+    modules/module.cpp \
+    modules/datadescriptor.cpp
 
 HEADERS  += mainwindow.h \
-    protocol/data.pb.h
+    protocol/data.pb.h \
+    communication/communication.h \
+    modules/module.h \
+    modules/datadescriptor.h
 
 FORMS    += mainwindow.ui
 

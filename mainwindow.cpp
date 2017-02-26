@@ -9,8 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    Broker::Data data_sim_model;
-
+    Broker::DataCollection provided_data;
+    Broker::DataCollection subscribed_data;
 }
 
 MainWindow::~MainWindow()
