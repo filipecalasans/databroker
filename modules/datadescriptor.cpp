@@ -44,6 +44,11 @@ void DataDescriptor::setUnit(const QString &value)
     unit = value;
 }
 
+QString DataDescriptor::getKey() const
+{
+    return dataName;
+}
+
 
 
 

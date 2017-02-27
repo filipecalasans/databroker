@@ -35,6 +35,8 @@ public:
         return *this;
     }
 
+    QString getKey() const;
+
 private:
 
     QString dataName;

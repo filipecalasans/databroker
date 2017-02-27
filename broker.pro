@@ -37,14 +37,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     protocol/data.pb.cc \
     communication/communication.cpp \
-    modules/module.cpp \
-    modules/datadescriptor.cpp
+    modules/datadescriptor.cpp \
+    modules/moduleconfiguration.cpp
 
 HEADERS  += mainwindow.h \
     protocol/data.pb.h \
     communication/communication.h \
-    modules/module.h \
-    modules/datadescriptor.h
+    modules/datadescriptor.h \
+    modules/moduleconfiguration.h
 
 FORMS    += mainwindow.ui
 

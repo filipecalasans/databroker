@@ -424,10 +424,25 @@ class Data : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
 
   // accessors -------------------------------------------------------
 
-  // optional string data_string = 7;
+  // required string data_name = 1;
+  bool has_data_name() const;
+  void clear_data_name();
+  static const int kDataNameFieldNumber = 1;
+  const ::std::string& data_name() const;
+  void set_data_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_data_name(::std::string&& value);
+  #endif
+  void set_data_name(const char* value);
+  void set_data_name(const char* value, size_t size);
+  ::std::string* mutable_data_name();
+  ::std::string* release_data_name();
+  void set_allocated_data_name(::std::string* data_name);
+
+  // optional string data_string = 6;
   bool has_data_string() const;
   void clear_data_string();
-  static const int kDataStringFieldNumber = 7;
+  static const int kDataStringFieldNumber = 6;
   const ::std::string& data_string() const;
   void set_data_string(const ::std::string& value);
   #if LANG_CXX11
@@ -439,36 +454,38 @@ class Data : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::std::string* release_data_string();
   void set_allocated_data_string(::std::string* data_string);
 
-  // required .Broker.DataType data_type = 3 [default = INT32];
+  // required .Broker.DataType data_type = 2 [default = INT32];
   bool has_data_type() const;
   void clear_data_type();
-  static const int kDataTypeFieldNumber = 3;
+  static const int kDataTypeFieldNumber = 2;
   ::Broker::DataType data_type() const;
   void set_data_type(::Broker::DataType value);
 
-  // optional int32 data_int32 = 4;
+  // optional int32 data_int32 = 3;
   bool has_data_int32() const;
   void clear_data_int32();
-  static const int kDataInt32FieldNumber = 4;
+  static const int kDataInt32FieldNumber = 3;
   ::google::protobuf::int32 data_int32() const;
   void set_data_int32(::google::protobuf::int32 value);
 
-  // optional double data_double = 5;
+  // optional double data_double = 4;
   bool has_data_double() const;
   void clear_data_double();
-  static const int kDataDoubleFieldNumber = 5;
+  static const int kDataDoubleFieldNumber = 4;
   double data_double() const;
   void set_data_double(double value);
 
-  // optional bool data_bool = 6;
+  // optional bool data_bool = 5;
   bool has_data_bool() const;
   void clear_data_bool();
-  static const int kDataBoolFieldNumber = 6;
+  static const int kDataBoolFieldNumber = 5;
   bool data_bool() const;
   void set_data_bool(bool value);
 
   // @@protoc_insertion_point(class_scope:Broker.Data)
  private:
+  void set_has_data_name();
+  void clear_has_data_name();
   void set_has_data_type();
   void clear_has_data_type();
   void set_has_data_int32();
@@ -480,9 +497,13 @@ class Data : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   void set_has_data_string();
   void clear_has_data_string();
 
+  // helper for ByteSizeLong()
+  size_t RequiredFieldsByteSizeFallback() const;
+
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::HasBits<1> _has_bits_;
   mutable int _cached_size_;
+  ::google::protobuf::internal::ArenaStringPtr data_name_;
   ::google::protobuf::internal::ArenaStringPtr data_string_;
   int data_type_;
   ::google::protobuf::int32 data_int32_;
@@ -925,15 +946,77 @@ DataRegistration::data_decriptors() const {
 
 // Data
 
-// required .Broker.DataType data_type = 3 [default = INT32];
+// required string data_name = 1;
+inline bool Data::has_data_name() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Data::set_has_data_name() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Data::clear_has_data_name() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Data::clear_data_name() {
+  data_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_data_name();
+}
+inline const ::std::string& Data::data_name() const {
+  // @@protoc_insertion_point(field_get:Broker.Data.data_name)
+  return data_name_.GetNoArena();
+}
+inline void Data::set_data_name(const ::std::string& value) {
+  set_has_data_name();
+  data_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Broker.Data.data_name)
+}
+#if LANG_CXX11
+inline void Data::set_data_name(::std::string&& value) {
+  set_has_data_name();
+  data_name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Broker.Data.data_name)
+}
+#endif
+inline void Data::set_data_name(const char* value) {
+  set_has_data_name();
+  data_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Broker.Data.data_name)
+}
+inline void Data::set_data_name(const char* value, size_t size) {
+  set_has_data_name();
+  data_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Broker.Data.data_name)
+}
+inline ::std::string* Data::mutable_data_name() {
+  set_has_data_name();
+  // @@protoc_insertion_point(field_mutable:Broker.Data.data_name)
+  return data_name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Data::release_data_name() {
+  // @@protoc_insertion_point(field_release:Broker.Data.data_name)
+  clear_has_data_name();
+  return data_name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Data::set_allocated_data_name(::std::string* data_name) {
+  if (data_name != NULL) {
+    set_has_data_name();
+  } else {
+    clear_has_data_name();
+  }
+  data_name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data_name);
+  // @@protoc_insertion_point(field_set_allocated:Broker.Data.data_name)
+}
+
+// required .Broker.DataType data_type = 2 [default = INT32];
 inline bool Data::has_data_type() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void Data::set_has_data_type() {
-  _has_bits_[0] |= 0x00000002u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void Data::clear_has_data_type() {
-  _has_bits_[0] &= ~0x00000002u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void Data::clear_data_type() {
   data_type_ = 0;
@@ -950,15 +1033,15 @@ inline void Data::set_data_type(::Broker::DataType value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_type)
 }
 
-// optional int32 data_int32 = 4;
+// optional int32 data_int32 = 3;
 inline bool Data::has_data_int32() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void Data::set_has_data_int32() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void Data::clear_has_data_int32() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void Data::clear_data_int32() {
   data_int32_ = 0;
@@ -974,15 +1057,15 @@ inline void Data::set_data_int32(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_int32)
 }
 
-// optional double data_double = 5;
+// optional double data_double = 4;
 inline bool Data::has_data_double() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void Data::set_has_data_double() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void Data::clear_has_data_double() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void Data::clear_data_double() {
   data_double_ = 0;
@@ -998,15 +1081,15 @@ inline void Data::set_data_double(double value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_double)
 }
 
-// optional bool data_bool = 6;
+// optional bool data_bool = 5;
 inline bool Data::has_data_bool() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline void Data::set_has_data_bool() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
 }
 inline void Data::clear_has_data_bool() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void Data::clear_data_bool() {
   data_bool_ = false;
@@ -1022,15 +1105,15 @@ inline void Data::set_data_bool(bool value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_bool)
 }
 
-// optional string data_string = 7;
+// optional string data_string = 6;
 inline bool Data::has_data_string() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
 inline void Data::set_has_data_string() {
-  _has_bits_[0] |= 0x00000001u;
+  _has_bits_[0] |= 0x00000002u;
 }
 inline void Data::clear_has_data_string() {
-  _has_bits_[0] &= ~0x00000001u;
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void Data::clear_data_string() {
   data_string_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
