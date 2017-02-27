@@ -46,7 +46,17 @@ void DataDescriptor::setUnit(const QString &value)
 
 QString DataDescriptor::getKey() const
 {
-    return dataName;
+    return dataLabel;
+}
+
+QString DataDescriptor::getDataLabel() const
+{
+    return dataLabel;
+}
+
+void DataDescriptor::setDataLabel(const QString &value)
+{
+    dataLabel = value;
 }
 
 

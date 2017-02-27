@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -38,13 +38,15 @@ SOURCES += main.cpp\
     protocol/data.pb.cc \
     communication/communication.cpp \
     modules/datadescriptor.cpp \
-    modules/moduleconfiguration.cpp
+    modules/moduleconfiguration.cpp \
+    modules/module.cpp
 
 HEADERS  += mainwindow.h \
     protocol/data.pb.h \
     communication/communication.h \
     modules/datadescriptor.h \
-    modules/moduleconfiguration.h
+    modules/moduleconfiguration.h \
+    modules/module.h
 
 FORMS    += mainwindow.ui
 

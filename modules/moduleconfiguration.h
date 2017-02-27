@@ -1,5 +1,5 @@
-#ifndef MODULE_H
-#define MODULE_H
+#ifndef MODULE_CONFIGURATION_H
+#define MODULE_CONFIGURATION_H
 
 #include <QObject>
 #include <QMap>
@@ -54,16 +54,20 @@ public:
                 .arg(socketDataType == UDP_SOCKET ? "UDP" : "TCP");
     }
 
-    void loadFromInit(QString iniPath);
-
     quint16 getPortData() const;
     void setPortData(const quint16 &value);
 
     quint16 getPortControl() const;
     void setPortControl(const quint16 &value);
 
+    QString getId() const;
+    void setId(const QString &value);
+
+    void loadFromJsonFile(const QString &moduleId, QString jsonPath);
+
 private:
 
+    QString id;
     QString name;
     QString description;
     QMap<QString, DataDescriptor> expected_data, data_registered;
@@ -73,8 +77,8 @@ private:
 
     /* Connection Data */
     QString ip;
-    quint16 portData;
-    quint16 portControl;
+    quint16 portData = 0;
+    quint16 portControl = 0;
 
     DataSocketType socketDataType = UDP_SOCKET;
 

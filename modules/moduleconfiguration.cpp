@@ -1,4 +1,9 @@
-#include "module.h"
+#include "moduleconfiguration.h"
+
+#include <QDebug>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include<QJsonObject>
 
 ModuleConfiguration::ModuleConfiguration(QObject *parent) : QObject(parent)
 {
@@ -34,7 +39,6 @@ void ModuleConfiguration::setMandatory(bool value)
 {
     mandatory = value;
 }
-
 
 bool ModuleConfiguration::getLocallyProvided() const
 {
@@ -85,3 +89,19 @@ void ModuleConfiguration::setPortControl(const quint16 &value)
 {
     portControl = value;
 }
+
+void ModuleConfiguration::loadFromJsonFile(const QString& moduleId, QString jsonPath)
+{
+
+}
+
+QString ModuleConfiguration::getId() const
+{
+    return id;
+}
+
+void ModuleConfiguration::setId(const QString &value)
+{
+    id = value;
+}
+

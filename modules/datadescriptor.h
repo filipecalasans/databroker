@@ -37,8 +37,12 @@ public:
 
     QString getKey() const;
 
+    QString getDataLabel() const;
+    void setDataLabel(const QString &value);
+
 private:
 
+    QString dataLabel;
     QString dataName;
     QString description;
     QString unit;
