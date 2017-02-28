@@ -31,11 +31,9 @@ int main(int argc, char *argv[])
         QString modulePath = settings.value(moduleId).toString();
         qDebug() << moduleId << "=" << modulePath;
         ModuleConfiguration config;
-        config.loadFromJsonFile(moduleId, modulePath);
+        config.loadFromJsonFile(modulePath);
         qDebug() << config;
     }
-
-
 
     return a.exec();
 }

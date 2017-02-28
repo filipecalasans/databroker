@@ -8,7 +8,9 @@ class DataDescriptor : public QObject
     Q_OBJECT
 public:
     explicit DataDescriptor(QObject *parent = 0);
-    explicit DataDescriptor(QString, QString, QString, QObject *parent = 0);
+    explicit DataDescriptor(QString id, QString name, QString desc, QString unit, QObject *parent = 0);
+    explicit DataDescriptor(const DataDescriptor& other, QObject *parent = 0);
+    explicit DataDescriptor(DataDescriptor& other, QObject *parent = 0);
 
     QString getDataName() const;
     void setDataName(const QString &value);
@@ -28,21 +30,23 @@ public:
 
     DataDescriptor& operator =(const DataDescriptor& other) {
         if(this != &other) {
+            this->dataId = other.getDataId();
             this->dataName = other.getDataName();
             this->unit = other.getUnit();
             this->description = other.getDescription();
         }
-        return *this;
+        return (*this);
     }
+
 
     QString getKey() const;
 
-    QString getDataLabel() const;
-    void setDataLabel(const QString &value);
+    QString getDataId() const;
+    void setDataId(const QString &value);
 
 private:
 
-    QString dataLabel;
+    QString dataId;
     QString dataName;
     QString description;
     QString unit;

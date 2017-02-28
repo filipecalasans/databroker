@@ -5,13 +5,24 @@ DataDescriptor::DataDescriptor(QObject *parent) : QObject(parent)
 
 }
 
-DataDescriptor::DataDescriptor(QString name, QString desc, QString unit, QObject *parent) :
+DataDescriptor::DataDescriptor(QString id, QString name, QString desc, QString unit, QObject *parent) :
     QObject(parent),
+    dataId(id),
     dataName(name),
     description(desc),
     unit(unit)
 {
 
+}
+
+DataDescriptor::DataDescriptor(const DataDescriptor &other, QObject *parent) : QObject(parent)
+{
+    (*this) = other;
+}
+
+DataDescriptor::DataDescriptor(DataDescriptor &other, QObject *parent) : QObject(parent)
+{
+    (*this) = other;
 }
 
 QString DataDescriptor::getDataName() const
@@ -46,17 +57,17 @@ void DataDescriptor::setUnit(const QString &value)
 
 QString DataDescriptor::getKey() const
 {
-    return dataLabel;
+    return dataId;
 }
 
-QString DataDescriptor::getDataLabel() const
+QString DataDescriptor::getDataId() const
 {
-    return dataLabel;
+    return dataId;
 }
 
-void DataDescriptor::setDataLabel(const QString &value)
+void DataDescriptor::setDataId(const QString &value)
 {
-    dataLabel = value;
+    dataId = value;
 }
 
 

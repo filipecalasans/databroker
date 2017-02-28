@@ -1,10 +1,9 @@
 #include "module.h"
 
-Module::Module(const QString& moduleId, const QString& iniPath, QObject *parent) : QObject(parent)
+Module::Module(const QString& iniPath, QObject *parent) : QObject(parent)
 {
     configuration = new ModuleConfiguration();
-
-    configuration->loadFromJsonFile(moduleId, iniPath);
+    configuration->loadFromJsonFile(iniPath);
 }
 
 Module::~Module()

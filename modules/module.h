@@ -11,7 +11,7 @@ class Module : public QObject
 {
     Q_OBJECT
 public:
-    explicit Module(const QString &moduleId, const QString& iniPath, QObject *parent = 0);
+    explicit Module(const QString& iniPath, QObject *parent = 0);
 
     ~Module();
 

@@ -36,14 +36,32 @@ public:
     void setDataSocketType(const DataSocketType &value);
 
     operator QString() const {
-        return QString("Module: %1\n"
+
+        QString descriptors;
+        for(auto it = data_published.begin(); it!=data_published.end(); it++) {
+            descriptors += (*it).operator QString();
+            descriptors += "\n";
+        }
+
+        QString consumed;
+        for(QString source : data_consumed.keys()) {
+            consumed += QString("From %1: ").arg(source);
+            for(QString dataId : *data_consumed.value(source)) {
+                consumed +=  QS,tring("%1, ").arg(dataId);
+            }
+            consumed += "\n";
+        }
+
+        QString out = QString("Module: %1\n"
                        "Description: %2\n"
                        "Is mandatory ? %3\n"
                        "Locally provided ? %4\n"
                        "IP: %5\n"
                        "PORT CONTROL: %6\n"
                        "PORT DATA: %7\n"
-                       "Socket Type: %8")
+                       "Socket Type: %8\n"
+                       "Data Published: %9\n"
+                       "Data Consumed: %10")
                 .arg(name)
                 .arg(description)
                 .arg(mandatory)
@@ -51,7 +69,11 @@ public:
                 .arg(ip)
                 .arg(portControl)
                 .arg(portData)
-                .arg(socketDataType == UDP_SOCKET ? "UDP" : "TCP");
+                .arg(socketDataType == UDP_SOCKET ? "UDP" : "TCP")
+                .arg(descriptors)
+                .arg(consumed);
+
+        return out;
     }
 
     quint16 getPortData() const;
@@ -63,19 +85,21 @@ public:
     QString getId() const;
     void setId(const QString &value);
 
-    void loadFromJsonFile(const QString &moduleId, QString jsonPath);
+    bool loadFromJsonFile(const QString& jsonPath);
 
 private:
 
     QString id;
     QString name;
     QString description;
-    QMap<QString, DataDescriptor> expected_data, data_registered;
+
+    QMap<QString, DataDescriptor> data_published;
+    QMap<QString, QStringList*> data_consumed;
 
     bool mandatory = true;
     bool locallyProvided = true;
 
-    /* Connection Data */
+    /* Connection Configuration */
     QString ip;
     quint16 portData = 0;
     quint16 portControl = 0;
