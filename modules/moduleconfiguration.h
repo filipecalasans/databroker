@@ -47,7 +47,7 @@ public:
         for(QString source : data_consumed.keys()) {
             consumed += QString("From %1: ").arg(source);
             for(QString dataId : *data_consumed.value(source)) {
-                consumed +=  QS,tring("%1, ").arg(dataId);
+                consumed +=  QString("%1, ").arg(dataId);
             }
             consumed += "\n";
         }
