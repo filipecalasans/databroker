@@ -9,7 +9,9 @@ Module::Module(const QString& configPath, QObject *parent) : QObject(parent)
 Module::~Module()
 {
     delete configuration;
-    delete controlSocket;
-    if(dataUdpSocket) { delete dataUdpSocket; }
-    if(dataTcpSocket) { delete dataTcpSocket; }
+}
+
+void Module::initControlConnection()
+{
+
 }

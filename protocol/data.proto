@@ -22,12 +22,13 @@ message DataRegistration {
 }
 
 message Data {
-    required string data_name = 1;
-    required DataType data_type = 2  [default = INT32];
-    optional int32 data_int32 = 3;
-    optional double data_double = 4;
-    optional bool data_bool = 5;
-    optional string data_string = 6;
+    required int64 timestamp = 1;
+    required string data_name = 2;
+    required DataType data_type = 3  [default = INT32];
+    optional int32 data_int32 = 4;
+    optional double data_double = 5;
+    optional bool data_bool = 6;
+    optional string data_string = 7;
 }
 
 message DataCollection {

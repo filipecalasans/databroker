@@ -64,12 +64,12 @@ void ModuleConfiguration::setIp(const QString &value)
     ip = value;
 }
 
-int ModuleConfiguration::getDataSocketType() const
+QAbstractSocket::SocketType ModuleConfiguration::getDataSocketType() const
 {
     return socketDataType;
 }
 
-void ModuleConfiguration::setDataSocketType(const DataSocketType &value)
+void ModuleConfiguration::setDataSocketType(const QAbstractSocket::SocketType &value)
 {
     socketDataType = value;
 }
@@ -117,7 +117,7 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
     ip = moduleObj.value("ip").toString();
     portData = moduleObj.value("port_data").toInt();
     portControl = moduleObj.value("port_control").toInt();
-    socketDataType = moduleObj.value("socket_type").toString() == "tcp" ? TCP_SOCKET : UDP_SOCKET;
+    socketDataType = moduleObj.value("socket_type").toString() == "tcp" ? QAbstractSocket::TcpSocket : QAbstractSocket::TcpSocket;
 
     QJsonArray dataPublished = moduleObj.value("data_published").toArray();
     if(dataPublished.size()) {

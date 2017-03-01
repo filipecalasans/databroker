@@ -39,14 +39,18 @@ SOURCES += main.cpp\
     communication/communication.cpp \
     modules/datadescriptor.cpp \
     modules/moduleconfiguration.cpp \
-    modules/module.cpp
+    modules/module.cpp \
+    communication/abstractdataconnection.cpp \
+    communication/tcpdataconnection.cpp
 
 HEADERS  += mainwindow.h \
     protocol/data.pb.h \
     communication/communication.h \
     modules/datadescriptor.h \
     modules/moduleconfiguration.h \
-    modules/module.h
+    modules/module.h \
+    communication/abstractdataconnection.h \
+    communication/tcpdataconnection.h
 
 FORMS    += mainwindow.ui
 

@@ -17,8 +17,13 @@ public:
 
 protected:
 
-
-
+    /*
+     * Prepare Socket connections, it assumes the
+     * module information have already been loaded from JSON descriptor.
+     *
+     */
+    void initControlConnection();
+    void initDataConnection();
 
 signals:
 
@@ -28,9 +33,7 @@ private:
 
     ModuleConfiguration *configuration = nullptr;
 
-    QTcpSocket *controlSocket = nullptr;
-    QTcpSocket *dataTcpSocket = nullptr;
-    QUdpSocket *dataUdpSocket = nullptr;
+    /* Add here Data and Control Connection */
 
 };
 

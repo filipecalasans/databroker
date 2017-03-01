@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QAbstractSocket>
 
 #include "datadescriptor.h"
 
@@ -11,11 +12,6 @@ class ModuleConfiguration : public QObject
     Q_OBJECT
 public:
     explicit ModuleConfiguration(QObject *parent = 0);
-
-    enum DataSocketType {
-        TCP_SOCKET,
-        UDP_SOCKET,
-    };
 
     QString getName() const;
     void setName(const QString &value);
@@ -32,8 +28,8 @@ public:
     QString getIp() const;
     void setIp(const QString &value);
 
-    int getDataSocketType() const;
-    void setDataSocketType(const DataSocketType &value);
+    QAbstractSocket::SocketType getDataSocketType() const;
+    void setDataSocketType(const QAbstractSocket::SocketType &value);
 
     operator QString() const {
 
@@ -69,7 +65,7 @@ public:
                 .arg(ip)
                 .arg(portControl)
                 .arg(portData)
-                .arg(socketDataType == UDP_SOCKET ? "UDP" : "TCP")
+                .arg((socketDataType == QAbstractSocket::TcpSocket) ? "TCP" : "UDP")
                 .arg(descriptors)
                 .arg(consumed);
 
@@ -104,7 +100,7 @@ private:
     quint16 portData = 0;
     quint16 portControl = 0;
 
-    DataSocketType socketDataType = UDP_SOCKET;
+    QAbstractSocket::SocketType socketDataType = QAbstractSocket::UdpSocket;
 
 };
 
