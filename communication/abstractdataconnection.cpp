@@ -2,7 +2,8 @@
 
 AbstractDataConnection::AbstractDataConnection(QObject *parent) : QObject(parent)
 {
-    static_buffer = new char[MAX_BUFFER_SIZE];
+    static_buffer_in = new char[MAX_BUFFER_SIZE];
+    static_buffer_out  = new char[MAX_BUFFER_SIZE];
 }
 
 AbstractDataConnection::AbstractDataConnection(const QString& ip,
@@ -19,6 +20,9 @@ AbstractDataConnection::~AbstractDataConnection()
     if(socket) {
         delete socket;
     }
+
+    delete []static_buffer_in;
+    delete []static_buffer_out;
 }
 
 bool AbstractDataConnection::getIsReady() const

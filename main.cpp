@@ -4,7 +4,7 @@
 #include <QSettings>
 #include <QDir>
 
-#include "modules/moduleconfiguration.h"
+#include "modules/module.h"
 
 int main(int argc, char *argv[])
 {
@@ -29,10 +29,8 @@ int main(int argc, char *argv[])
 
     for(auto moduleId : settings.allKeys()) {
         QString modulePath = settings.value(moduleId).toString();
+        new Module(modulePath);
         qDebug() << moduleId << "=" << modulePath;
-        ModuleConfiguration config;
-        config.loadFromJsonFile(modulePath);
-        qDebug() << config;
     }
 
     return a.exec();

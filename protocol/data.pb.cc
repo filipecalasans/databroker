@@ -62,17 +62,19 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, timestamp_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, data_name_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, data_type_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, data_int32_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, data_double_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, data_bool_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Data, data_string_),
-  0,
   2,
+  0,
   3,
   4,
   5,
+  6,
   1,
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DataCollection, _has_bits_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DataCollection, _internal_metadata_),
@@ -87,8 +89,8 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, 8, sizeof(DataDescriptor)},
   { 12, 18, sizeof(DataRegistration)},
-  { 20, 30, sizeof(Data)},
-  { 36, 42, sizeof(DataCollection)},
+  { 20, 31, sizeof(Data)},
+  { 38, 44, sizeof(DataCollection)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -154,18 +156,18 @@ void AddDescriptorsImpl() {
       "\002(\t\022\014\n\004unit\030\003 \002(\t\022*\n\tdata_type\030\004 \002(\0162\020.B"
       "roker.DataType:\005INT32\"Z\n\020DataRegistratio"
       "n\022\025\n\rprovider_name\030\001 \001(\t\022/\n\017data_decript"
-      "ors\030\002 \003(\0132\026.Broker.DataDescriptor\"\226\001\n\004Da"
-      "ta\022\021\n\tdata_name\030\001 \002(\t\022*\n\tdata_type\030\002 \002(\016"
-      "2\020.Broker.DataType:\005INT32\022\022\n\ndata_int32\030"
-      "\003 \001(\005\022\023\n\013data_double\030\004 \001(\001\022\021\n\tdata_bool\030"
-      "\005 \001(\010\022\023\n\013data_string\030\006 \001(\t\"L\n\016DataCollec"
-      "tion\022\025\n\rprovider_name\030\001 \001(\t\022#\n\rdata_prov"
-      "ided\030\002 \003(\0132\014.Broker.Data*:\n\010DataType\022\t\n\005"
-      "INT32\020\000\022\n\n\006DOUBLE\020\001\022\013\n\007BOOLEAN\020\002\022\n\n\006STRI"
-      "NG\020\003"
+      "ors\030\002 \003(\0132\026.Broker.DataDescriptor\"\251\001\n\004Da"
+      "ta\022\021\n\ttimestamp\030\001 \002(\004\022\021\n\tdata_name\030\002 \002(\t"
+      "\022*\n\tdata_type\030\003 \002(\0162\020.Broker.DataType:\005I"
+      "NT32\022\022\n\ndata_int32\030\004 \001(\005\022\023\n\013data_double\030"
+      "\005 \001(\001\022\021\n\tdata_bool\030\006 \001(\010\022\023\n\013data_string\030"
+      "\007 \001(\t\"L\n\016DataCollection\022\025\n\rprovider_name"
+      "\030\001 \001(\t\022#\n\rdata_provided\030\002 \003(\0132\014.Broker.D"
+      "ata*:\n\010DataType\022\t\n\005INT32\020\000\022\n\n\006DOUBLE\020\001\022\013"
+      "\n\007BOOLEAN\020\002\022\n\n\006STRING\020\003"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 524);
+      descriptor, 543);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "data.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -1249,6 +1251,7 @@ DataRegistration::data_decriptors() const {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Data::kTimestampFieldNumber;
 const int Data::kDataNameFieldNumber;
 const int Data::kDataTypeFieldNumber;
 const int Data::kDataInt32FieldNumber;
@@ -1279,9 +1282,9 @@ Data::Data(const Data& from)
   if (from.has_data_string()) {
     data_string_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_string_);
   }
-  ::memcpy(&data_type_, &from.data_type_,
+  ::memcpy(&timestamp_, &from.timestamp_,
     reinterpret_cast<char*>(&data_bool_) -
-    reinterpret_cast<char*>(&data_type_) + sizeof(data_bool_));
+    reinterpret_cast<char*>(&timestamp_) + sizeof(data_bool_));
   // @@protoc_insertion_point(copy_constructor:Broker.Data)
 }
 
@@ -1289,8 +1292,8 @@ void Data::SharedCtor() {
   _cached_size_ = 0;
   data_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   data_string_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&data_type_, 0, reinterpret_cast<char*>(&data_bool_) -
-    reinterpret_cast<char*>(&data_type_) + sizeof(data_bool_));
+  ::memset(&timestamp_, 0, reinterpret_cast<char*>(&data_bool_) -
+    reinterpret_cast<char*>(&timestamp_) + sizeof(data_bool_));
 }
 
 Data::~Data() {
@@ -1338,9 +1341,9 @@ void Data::Clear() {
       (*data_string_.UnsafeRawStringPointer())->clear();
     }
   }
-  if (_has_bits_[0 / 32] & 60u) {
-    ::memset(&data_type_, 0, reinterpret_cast<char*>(&data_bool_) -
-      reinterpret_cast<char*>(&data_type_) + sizeof(data_bool_));
+  if (_has_bits_[0 / 32] & 124u) {
+    ::memset(&timestamp_, 0, reinterpret_cast<char*>(&data_bool_) -
+      reinterpret_cast<char*>(&timestamp_) + sizeof(data_bool_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear();
@@ -1356,10 +1359,24 @@ bool Data::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string data_name = 1;
+      // required uint64 timestamp = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) ==
-            static_cast<::google::protobuf::uint8>(10u)) {
+            static_cast<::google::protobuf::uint8>(8u)) {
+          set_has_timestamp();
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &timestamp_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // required string data_name = 2;
+      case 2: {
+        if (static_cast<::google::protobuf::uint8>(tag) ==
+            static_cast<::google::protobuf::uint8>(18u)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_data_name()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
@@ -1372,10 +1389,10 @@ bool Data::MergePartialFromCodedStream(
         break;
       }
 
-      // required .Broker.DataType data_type = 2 [default = INT32];
-      case 2: {
+      // required .Broker.DataType data_type = 3 [default = INT32];
+      case 3: {
         if (static_cast<::google::protobuf::uint8>(tag) ==
-            static_cast<::google::protobuf::uint8>(16u)) {
+            static_cast<::google::protobuf::uint8>(24u)) {
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
@@ -1383,7 +1400,7 @@ bool Data::MergePartialFromCodedStream(
           if (::Broker::DataType_IsValid(value)) {
             set_data_type(static_cast< ::Broker::DataType >(value));
           } else {
-            mutable_unknown_fields()->AddVarint(2, value);
+            mutable_unknown_fields()->AddVarint(3, value);
           }
         } else {
           goto handle_unusual;
@@ -1391,10 +1408,10 @@ bool Data::MergePartialFromCodedStream(
         break;
       }
 
-      // optional int32 data_int32 = 3;
-      case 3: {
+      // optional int32 data_int32 = 4;
+      case 4: {
         if (static_cast<::google::protobuf::uint8>(tag) ==
-            static_cast<::google::protobuf::uint8>(24u)) {
+            static_cast<::google::protobuf::uint8>(32u)) {
           set_has_data_int32();
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -1405,10 +1422,10 @@ bool Data::MergePartialFromCodedStream(
         break;
       }
 
-      // optional double data_double = 4;
-      case 4: {
+      // optional double data_double = 5;
+      case 5: {
         if (static_cast<::google::protobuf::uint8>(tag) ==
-            static_cast<::google::protobuf::uint8>(33u)) {
+            static_cast<::google::protobuf::uint8>(41u)) {
           set_has_data_double();
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
@@ -1419,10 +1436,10 @@ bool Data::MergePartialFromCodedStream(
         break;
       }
 
-      // optional bool data_bool = 5;
-      case 5: {
+      // optional bool data_bool = 6;
+      case 6: {
         if (static_cast<::google::protobuf::uint8>(tag) ==
-            static_cast<::google::protobuf::uint8>(40u)) {
+            static_cast<::google::protobuf::uint8>(48u)) {
           set_has_data_bool();
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
@@ -1433,10 +1450,10 @@ bool Data::MergePartialFromCodedStream(
         break;
       }
 
-      // optional string data_string = 6;
-      case 6: {
+      // optional string data_string = 7;
+      case 7: {
         if (static_cast<::google::protobuf::uint8>(tag) ==
-            static_cast<::google::protobuf::uint8>(50u)) {
+            static_cast<::google::protobuf::uint8>(58u)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_data_string()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
@@ -1474,45 +1491,50 @@ failure:
 void Data::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:Broker.Data)
-  // required string data_name = 1;
+  // required uint64 timestamp = 1;
+  if (has_timestamp()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(1, this->timestamp(), output);
+  }
+
+  // required string data_name = 2;
   if (has_data_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->data_name().data(), this->data_name().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
       "Broker.Data.data_name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->data_name(), output);
+      2, this->data_name(), output);
   }
 
-  // required .Broker.DataType data_type = 2 [default = INT32];
+  // required .Broker.DataType data_type = 3 [default = INT32];
   if (has_data_type()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      2, this->data_type(), output);
+      3, this->data_type(), output);
   }
 
-  // optional int32 data_int32 = 3;
+  // optional int32 data_int32 = 4;
   if (has_data_int32()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->data_int32(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->data_int32(), output);
   }
 
-  // optional double data_double = 4;
+  // optional double data_double = 5;
   if (has_data_double()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->data_double(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->data_double(), output);
   }
 
-  // optional bool data_bool = 5;
+  // optional bool data_bool = 6;
   if (has_data_bool()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->data_bool(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->data_bool(), output);
   }
 
-  // optional string data_string = 6;
+  // optional string data_string = 7;
   if (has_data_string()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->data_string().data(), this->data_string().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
       "Broker.Data.data_string");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      6, this->data_string(), output);
+      7, this->data_string(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1526,7 +1548,12 @@ void Data::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:Broker.Data)
-  // required string data_name = 1;
+  // required uint64 timestamp = 1;
+  if (has_timestamp()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(1, this->timestamp(), target);
+  }
+
+  // required string data_name = 2;
   if (has_data_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->data_name().data(), this->data_name().length(),
@@ -1534,31 +1561,31 @@ void Data::SerializeWithCachedSizes(
       "Broker.Data.data_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->data_name(), target);
+        2, this->data_name(), target);
   }
 
-  // required .Broker.DataType data_type = 2 [default = INT32];
+  // required .Broker.DataType data_type = 3 [default = INT32];
   if (has_data_type()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      2, this->data_type(), target);
+      3, this->data_type(), target);
   }
 
-  // optional int32 data_int32 = 3;
+  // optional int32 data_int32 = 4;
   if (has_data_int32()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->data_int32(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->data_int32(), target);
   }
 
-  // optional double data_double = 4;
+  // optional double data_double = 5;
   if (has_data_double()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->data_double(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->data_double(), target);
   }
 
-  // optional bool data_bool = 5;
+  // optional bool data_bool = 6;
   if (has_data_bool()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->data_bool(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->data_bool(), target);
   }
 
-  // optional string data_string = 6;
+  // optional string data_string = 7;
   if (has_data_string()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->data_string().data(), this->data_string().length(),
@@ -1566,7 +1593,7 @@ void Data::SerializeWithCachedSizes(
       "Broker.Data.data_string");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        6, this->data_string(), target);
+        7, this->data_string(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1582,14 +1609,21 @@ size_t Data::RequiredFieldsByteSizeFallback() const {
   size_t total_size = 0;
 
   if (has_data_name()) {
-    // required string data_name = 1;
+    // required string data_name = 2;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->data_name());
   }
 
+  if (has_timestamp()) {
+    // required uint64 timestamp = 1;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->timestamp());
+  }
+
   if (has_data_type()) {
-    // required .Broker.DataType data_type = 2 [default = INT32];
+    // required .Broker.DataType data_type = 3 [default = INT32];
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->data_type());
   }
@@ -1605,40 +1639,45 @@ size_t Data::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         unknown_fields());
   }
-  if (((_has_bits_[0] & 0x00000005) ^ 0x00000005) == 0) {  // All required fields are present.
-    // required string data_name = 1;
+  if (((_has_bits_[0] & 0x0000000d) ^ 0x0000000d) == 0) {  // All required fields are present.
+    // required string data_name = 2;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->data_name());
 
-    // required .Broker.DataType data_type = 2 [default = INT32];
+    // required uint64 timestamp = 1;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->timestamp());
+
+    // required .Broker.DataType data_type = 3 [default = INT32];
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->data_type());
 
   } else {
     total_size += RequiredFieldsByteSizeFallback();
   }
-  // optional string data_string = 6;
+  // optional string data_string = 7;
   if (has_data_string()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->data_string());
   }
 
-  if (_has_bits_[0 / 32] & 56u) {
-    // optional int32 data_int32 = 3;
+  if (_has_bits_[0 / 32] & 112u) {
+    // optional int32 data_int32 = 4;
     if (has_data_int32()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->data_int32());
     }
 
-    // optional double data_double = 4;
+    // optional double data_double = 5;
     if (has_data_double()) {
       total_size += 1 + 8;
     }
 
-    // optional bool data_bool = 5;
+    // optional bool data_bool = 6;
     if (has_data_bool()) {
       total_size += 1 + 1;
     }
@@ -1670,7 +1709,7 @@ void Data::MergeFrom(const Data& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:Broker.Data)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from._has_bits_[0 / 32] & 63u) {
+  if (from._has_bits_[0 / 32] & 127u) {
     if (from.has_data_name()) {
       set_has_data_name();
       data_name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_name_);
@@ -1678,6 +1717,9 @@ void Data::MergeFrom(const Data& from) {
     if (from.has_data_string()) {
       set_has_data_string();
       data_string_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_string_);
+    }
+    if (from.has_timestamp()) {
+      set_timestamp(from.timestamp());
     }
     if (from.has_data_type()) {
       set_data_type(from.data_type());
@@ -1709,7 +1751,7 @@ void Data::CopyFrom(const Data& from) {
 }
 
 bool Data::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000005) != 0x00000005) return false;
+  if ((_has_bits_[0] & 0x0000000d) != 0x0000000d) return false;
   return true;
 }
 
@@ -1720,6 +1762,7 @@ void Data::Swap(Data* other) {
 void Data::InternalSwap(Data* other) {
   data_name_.Swap(&other->data_name_);
   data_string_.Swap(&other->data_string_);
+  std::swap(timestamp_, other->timestamp_);
   std::swap(data_type_, other->data_type_);
   std::swap(data_int32_, other->data_int32_);
   std::swap(data_double_, other->data_double_);
@@ -1737,7 +1780,31 @@ void Data::InternalSwap(Data* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // Data
 
-// required string data_name = 1;
+// required uint64 timestamp = 1;
+bool Data::has_timestamp() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+void Data::set_has_timestamp() {
+  _has_bits_[0] |= 0x00000004u;
+}
+void Data::clear_has_timestamp() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+void Data::clear_timestamp() {
+  timestamp_ = GOOGLE_ULONGLONG(0);
+  clear_has_timestamp();
+}
+::google::protobuf::uint64 Data::timestamp() const {
+  // @@protoc_insertion_point(field_get:Broker.Data.timestamp)
+  return timestamp_;
+}
+void Data::set_timestamp(::google::protobuf::uint64 value) {
+  set_has_timestamp();
+  timestamp_ = value;
+  // @@protoc_insertion_point(field_set:Broker.Data.timestamp)
+}
+
+// required string data_name = 2;
 bool Data::has_data_name() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1799,15 +1866,15 @@ void Data::set_allocated_data_name(::std::string* data_name) {
   // @@protoc_insertion_point(field_set_allocated:Broker.Data.data_name)
 }
 
-// required .Broker.DataType data_type = 2 [default = INT32];
+// required .Broker.DataType data_type = 3 [default = INT32];
 bool Data::has_data_type() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 void Data::set_has_data_type() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 void Data::clear_has_data_type() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 void Data::clear_data_type() {
   data_type_ = 0;
@@ -1824,15 +1891,15 @@ void Data::set_data_type(::Broker::DataType value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_type)
 }
 
-// optional int32 data_int32 = 3;
+// optional int32 data_int32 = 4;
 bool Data::has_data_int32() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 void Data::set_has_data_int32() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
 }
 void Data::clear_has_data_int32() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 void Data::clear_data_int32() {
   data_int32_ = 0;
@@ -1848,15 +1915,15 @@ void Data::set_data_int32(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_int32)
 }
 
-// optional double data_double = 4;
+// optional double data_double = 5;
 bool Data::has_data_double() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 void Data::set_has_data_double() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
 }
 void Data::clear_has_data_double() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 void Data::clear_data_double() {
   data_double_ = 0;
@@ -1872,15 +1939,15 @@ void Data::set_data_double(double value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_double)
 }
 
-// optional bool data_bool = 5;
+// optional bool data_bool = 6;
 bool Data::has_data_bool() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
 void Data::set_has_data_bool() {
-  _has_bits_[0] |= 0x00000020u;
+  _has_bits_[0] |= 0x00000040u;
 }
 void Data::clear_has_data_bool() {
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000040u;
 }
 void Data::clear_data_bool() {
   data_bool_ = false;
@@ -1896,7 +1963,7 @@ void Data::set_data_bool(bool value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_bool)
 }
 
-// optional string data_string = 6;
+// optional string data_string = 7;
 bool Data::has_data_string() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }

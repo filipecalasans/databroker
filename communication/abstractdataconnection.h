@@ -27,9 +27,8 @@ public:
 
     virtual void deInitConnection() = 0;
     virtual bool initConnection(QString ipAddress, quint16 portNum) = 0;
-    virtual void receiveDataPublished(Broker::DataCollection *dataCollection) = 0;
-    virtual void provideDataConsumed(Broker::DataCollection *dataCollection) = 0;
-    virtual bool identifiedPacketOverrun() = 0;
+    virtual bool receiveDataPublished(Broker::DataCollection *dataCollection) = 0;
+    virtual bool provideDataConsumed(Broker::DataCollection *dataCollection) = 0;
 
     bool getIsReady() const;
     void setIsReady(bool value);
@@ -54,8 +53,10 @@ protected:
     bool isReady = false;
 
     bool bufferReady = false;
-    char *static_buffer=nullptr;
-    int len = 0;
+
+    char *static_buffer_in=nullptr, *static_buffer_out=nullptr;
+    quint32 len = 0;
+
 };
 
 #endif // ABSTRACTDATACONNECTION_H

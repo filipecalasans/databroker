@@ -2,30 +2,31 @@
 #define TCPDATACONNECTION_H
 
 #include "abstractdataconnection.h"
+
 #include <QDataStream>
 
 class TcpDataConnection : public AbstractDataConnection
 {
 public:
 
-    TcpDataConnection(QObject *parent = 0);
-    TcpDataConnection(const QString& ipAddress, quint16 portNum, QObject *parent = 0);
+    explicit TcpDataConnection(QObject *parent = 0);
+    explicit TcpDataConnection(const QString& ipAddress, quint16 portNum, QObject *parent = 0);
+
+    virtual ~TcpDataConnection();
 
     virtual void deInitConnection();
     virtual bool initConnection(QString ipAddress, quint16 portNum);
-    virtual void receiveDataPublished(Broker::DataCollection *dataCollection);
-    virtual void provideDataConsumed(Broker::DataCollection *dataCollection);
-    virtual bool identifiedPacketOverrun();
+    virtual bool receiveDataPublished(Broker::DataCollection *dataCollection);
+    virtual bool provideDataConsumed(Broker::DataCollection *dataCollection);
 
 private:
 
     QDataStream *stream = nullptr;
+    quint64 count;
 
 private slots:
 
     void readData();
-
-
 
 };
 

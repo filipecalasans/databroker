@@ -424,10 +424,10 @@ class Data : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
 
   // accessors -------------------------------------------------------
 
-  // required string data_name = 1;
+  // required string data_name = 2;
   bool has_data_name() const;
   void clear_data_name();
-  static const int kDataNameFieldNumber = 1;
+  static const int kDataNameFieldNumber = 2;
   const ::std::string& data_name() const;
   void set_data_name(const ::std::string& value);
   #if LANG_CXX11
@@ -439,10 +439,10 @@ class Data : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::std::string* release_data_name();
   void set_allocated_data_name(::std::string* data_name);
 
-  // optional string data_string = 6;
+  // optional string data_string = 7;
   bool has_data_string() const;
   void clear_data_string();
-  static const int kDataStringFieldNumber = 6;
+  static const int kDataStringFieldNumber = 7;
   const ::std::string& data_string() const;
   void set_data_string(const ::std::string& value);
   #if LANG_CXX11
@@ -454,36 +454,45 @@ class Data : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::std::string* release_data_string();
   void set_allocated_data_string(::std::string* data_string);
 
-  // required .Broker.DataType data_type = 2 [default = INT32];
+  // required uint64 timestamp = 1;
+  bool has_timestamp() const;
+  void clear_timestamp();
+  static const int kTimestampFieldNumber = 1;
+  ::google::protobuf::uint64 timestamp() const;
+  void set_timestamp(::google::protobuf::uint64 value);
+
+  // required .Broker.DataType data_type = 3 [default = INT32];
   bool has_data_type() const;
   void clear_data_type();
-  static const int kDataTypeFieldNumber = 2;
+  static const int kDataTypeFieldNumber = 3;
   ::Broker::DataType data_type() const;
   void set_data_type(::Broker::DataType value);
 
-  // optional int32 data_int32 = 3;
+  // optional int32 data_int32 = 4;
   bool has_data_int32() const;
   void clear_data_int32();
-  static const int kDataInt32FieldNumber = 3;
+  static const int kDataInt32FieldNumber = 4;
   ::google::protobuf::int32 data_int32() const;
   void set_data_int32(::google::protobuf::int32 value);
 
-  // optional double data_double = 4;
+  // optional double data_double = 5;
   bool has_data_double() const;
   void clear_data_double();
-  static const int kDataDoubleFieldNumber = 4;
+  static const int kDataDoubleFieldNumber = 5;
   double data_double() const;
   void set_data_double(double value);
 
-  // optional bool data_bool = 5;
+  // optional bool data_bool = 6;
   bool has_data_bool() const;
   void clear_data_bool();
-  static const int kDataBoolFieldNumber = 5;
+  static const int kDataBoolFieldNumber = 6;
   bool data_bool() const;
   void set_data_bool(bool value);
 
   // @@protoc_insertion_point(class_scope:Broker.Data)
  private:
+  void set_has_timestamp();
+  void clear_has_timestamp();
   void set_has_data_name();
   void clear_has_data_name();
   void set_has_data_type();
@@ -505,6 +514,7 @@ class Data : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   mutable int _cached_size_;
   ::google::protobuf::internal::ArenaStringPtr data_name_;
   ::google::protobuf::internal::ArenaStringPtr data_string_;
+  ::google::protobuf::uint64 timestamp_;
   int data_type_;
   ::google::protobuf::int32 data_int32_;
   double data_double_;
@@ -946,7 +956,31 @@ DataRegistration::data_decriptors() const {
 
 // Data
 
-// required string data_name = 1;
+// required uint64 timestamp = 1;
+inline bool Data::has_timestamp() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Data::set_has_timestamp() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void Data::clear_has_timestamp() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void Data::clear_timestamp() {
+  timestamp_ = GOOGLE_ULONGLONG(0);
+  clear_has_timestamp();
+}
+inline ::google::protobuf::uint64 Data::timestamp() const {
+  // @@protoc_insertion_point(field_get:Broker.Data.timestamp)
+  return timestamp_;
+}
+inline void Data::set_timestamp(::google::protobuf::uint64 value) {
+  set_has_timestamp();
+  timestamp_ = value;
+  // @@protoc_insertion_point(field_set:Broker.Data.timestamp)
+}
+
+// required string data_name = 2;
 inline bool Data::has_data_name() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1008,15 +1042,15 @@ inline void Data::set_allocated_data_name(::std::string* data_name) {
   // @@protoc_insertion_point(field_set_allocated:Broker.Data.data_name)
 }
 
-// required .Broker.DataType data_type = 2 [default = INT32];
+// required .Broker.DataType data_type = 3 [default = INT32];
 inline bool Data::has_data_type() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void Data::set_has_data_type() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void Data::clear_has_data_type() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void Data::clear_data_type() {
   data_type_ = 0;
@@ -1033,15 +1067,15 @@ inline void Data::set_data_type(::Broker::DataType value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_type)
 }
 
-// optional int32 data_int32 = 3;
+// optional int32 data_int32 = 4;
 inline bool Data::has_data_int32() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void Data::set_has_data_int32() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void Data::clear_has_data_int32() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void Data::clear_data_int32() {
   data_int32_ = 0;
@@ -1057,15 +1091,15 @@ inline void Data::set_data_int32(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_int32)
 }
 
-// optional double data_double = 4;
+// optional double data_double = 5;
 inline bool Data::has_data_double() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline void Data::set_has_data_double() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
 }
 inline void Data::clear_has_data_double() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void Data::clear_data_double() {
   data_double_ = 0;
@@ -1081,15 +1115,15 @@ inline void Data::set_data_double(double value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_double)
 }
 
-// optional bool data_bool = 5;
+// optional bool data_bool = 6;
 inline bool Data::has_data_bool() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
 inline void Data::set_has_data_bool() {
-  _has_bits_[0] |= 0x00000020u;
+  _has_bits_[0] |= 0x00000040u;
 }
 inline void Data::clear_has_data_bool() {
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000040u;
 }
 inline void Data::clear_data_bool() {
   data_bool_ = false;
@@ -1105,7 +1139,7 @@ inline void Data::set_data_bool(bool value) {
   // @@protoc_insertion_point(field_set:Broker.Data.data_bool)
 }
 
-// optional string data_string = 6;
+// optional string data_string = 7;
 inline bool Data::has_data_string() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }

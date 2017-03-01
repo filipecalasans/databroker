@@ -6,6 +6,7 @@
 #include <QUdpSocket>
 
 #include "moduleconfiguration.h"
+#include "communication/tcpdataconnection.h"
 
 class Module : public QObject
 {
@@ -34,7 +35,7 @@ private:
     ModuleConfiguration *configuration = nullptr;
 
     /* Add here Data and Control Connection */
-
+    AbstractDataConnection *dataConnection = nullptr;
 };
 
 #endif // MODULE_H

@@ -117,7 +117,7 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
     ip = moduleObj.value("ip").toString();
     portData = moduleObj.value("port_data").toInt();
     portControl = moduleObj.value("port_control").toInt();
-    socketDataType = moduleObj.value("socket_type").toString() == "tcp" ? QAbstractSocket::TcpSocket : QAbstractSocket::TcpSocket;
+    socketDataType = moduleObj.value("socket_type").toString() == "tcp" ? QAbstractSocket::TcpSocket : QAbstractSocket::UdpSocket;
 
     QJsonArray dataPublished = moduleObj.value("data_published").toArray();
     if(dataPublished.size()) {
@@ -133,7 +133,7 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
                 data_published.insert(dataId, descriptor);
             }
         }
-        qDebug() << data_published;
+        //qDebug() << data_published;
     }
 
     QJsonArray dataConsumed = moduleObj.value("data_consumed").toArray();

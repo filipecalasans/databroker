@@ -22,7 +22,7 @@ message DataRegistration {
 }
 
 message Data {
-    required int64 timestamp = 1;
+    required uint64 timestamp = 1;
     required string data_name = 2;
     required DataType data_type = 3  [default = INT32];
     optional int32 data_int32 = 4;
@@ -32,6 +32,7 @@ message Data {
 }
 
 message DataCollection {
-    optional string provider_name = 1;
-    repeated Data data_provided = 2;
+    required uint32 packet_len = 1;
+    optional string provider_name = 2;
+    repeated Data data_provided = 3;
 }
