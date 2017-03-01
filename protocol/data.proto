@@ -32,7 +32,6 @@ message Data {
 }
 
 message DataCollection {
-    required uint32 packet_len = 1;
-    optional string provider_name = 2;
-    repeated Data data_provided = 3;
+    optional string provider_name = 1;
+    repeated Data data_provided = 2;
 }
