@@ -9,7 +9,11 @@ TcpDataConnection::TcpDataConnection(QObject *parent) : AbstractDataConnection(p
     socket = new QTcpSocket();
     stream = new QDataStream(socket);
 
+    dataOut = new QByteArray();
+    streamOut = new QDataStream(dataOut, QIODevice::ReadWrite);
+
     stream->setVersion(QDataStream::Qt_5_7);
+    streamOut->setVersion(QDataStream::Qt_5_7);
 
     connect(socket, &QTcpSocket::stateChanged, [this](QAbstractSocket::SocketState socketState) {
         if(socketState == QAbstractSocket::ConnectedState) {
@@ -37,13 +41,20 @@ TcpDataConnection::~TcpDataConnection()
         delete socket;
     }
     delete stream;
+    delete streamOut;
 }
 
 void TcpDataConnection::deInitConnection()
 {
-    socket->abort();
+    if(socket) {
+        socket->abort();
+    }
+
     bufferReady = false;
-    stream->resetStatus();
+
+    if(stream) {
+        stream->resetStatus();
+    }
 }
 
 bool TcpDataConnection::initConnection(QString ipAddress, quint16 portNum)
@@ -61,20 +72,28 @@ bool TcpDataConnection::receiveDataPublished(Broker::DataCollection *dataCollect
 
 bool TcpDataConnection::provideDataConsumed(Broker::DataCollection *dataCollection)
 {
-    int len = dataCollection->ByteSize();
+    quint32 writeLen = dataCollection->ByteSize();
 
-    if(len <= MAX_BUFFER_SIZE) {
-        dataCollection->SerializeToArray(static_buffer_out, MAX_BUFFER_SIZE);
-        if(stream->writeRawData(static_buffer_out, len) == len) {
-            qDebug() << "[TcpDataConnection::provideDataConsumed] data sent, len:" << len;
+    QByteArray array;
+    QDataStream integer(&array, QIODevice::ReadWrite);
+
+    if(writeLen <= MAX_BUFFER_SIZE) {
+        integer << writeLen;
+        memcpy(static_buffer_out, array.data(), array.size());
+        int integerSize = array.size();
+        writeLen += integerSize;
+        dataCollection->SerializeToArray(static_buffer_out+integerSize, MAX_BUFFER_SIZE);
+        int writtenBytes = socket->write(static_buffer_out, writeLen);
+        if(writeLen == (quint64)writtenBytes) {
+            qDebug() << "[TcpDataConnection::provideDataConsumed] len =" << writtenBytes-integerSize;
             return true;
         }
 
+        qDebug() << "[TcpDataConnection::provideDataConsumed] Error len != len_sent";
         return false;
     }
 
-    qDebug() << "[TcpDataConnection::provideDataConsumed] data sent, len:" << len;
-
+    qDebug() << "[TcpDataConnection::provideDataConsumed] error, len > MAX_BUFFER_SIZE";
     return false;
 }
 
@@ -86,37 +105,37 @@ void TcpDataConnection::readData()
 
         stream->startTransaction();
 
-        (*stream) >> len;
+        quint32 packet_len = 0;
 
-        if(!stream->commitTransaction()) {
+        (*stream) >> packet_len;
+
+        if(!stream->commitTransaction() || packet_len == 0) {
             return;
         }
 
-        if(len > MAX_BUFFER_SIZE) {
-            stream->readRawData(static_buffer_in, len);
+        if(packet_len > MAX_BUFFER_SIZE) {
+            stream->readRawData(static_buffer_in, MAX_BUFFER_SIZE);
             return;
         }
 
-        int read_len = stream->readRawData(static_buffer_in, len);
+        int read_len = stream->readRawData(static_buffer_in, packet_len);
 
-        qDebug() << "[TcpDataConnection::readData] Data received" << len;
+        qDebug() << "[TcpDataConnection::readData] Data received" << read_len;
 
-        if(read_len == len) {
-
+        if((quint64)read_len == packet_len) {
+            len = packet_len;
             if(bufferReady) {
                 emitOverrun = true;
                 qDebug() << "[TcpDataConnection::readData] Overrun ocurred";
             }
 
-
             if(emitOverrun) {
-                bufferReady = false;
                 emit overrunIdentified();
             }
-            else {
-                bufferReady = true;
-                emit receivedDataPublished();
-            }
+
+            bufferReady = true;
+            emit receivedDataPublished();
         }
+
     }
 }

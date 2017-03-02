@@ -22,6 +22,9 @@ public:
 private:
 
     QDataStream *stream = nullptr;
+    QDataStream *streamOut = nullptr;
+    QByteArray *dataOut = nullptr;
+
     quint64 count;
 
 private slots:

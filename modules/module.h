@@ -16,6 +16,8 @@ public:
 
     ~Module();
 
+    void timerEvent(QTimerEvent *event);
+
 protected:
 
     /*
