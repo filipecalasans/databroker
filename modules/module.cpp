@@ -10,7 +10,7 @@ Module::Module(const QString& configPath, QObject *parent) : QObject(parent)
 
     initDataConnection();
 
-    startTimer(10);
+    startTimer(500);
 }
 
 Module::~Module()
@@ -23,32 +23,33 @@ Module::~Module()
 
 void Module::timerEvent(QTimerEvent *event)
 {
+    Q_UNUSED(event)
+
     if(dataConnection) {
         if(dataConnection->getIsReady()) {
             Broker::DataCollection packet;
 
             packet.set_provider_name("radio");
+            packet.set_timestamp(QDateTime::currentMSecsSinceEpoch());
 
             Broker::Data *px0, *py0;
 
-            quint64 timestamp = QDateTime::currentMSecsSinceEpoch();
+//            px0 = packet.add_data_provided();
+//            px0->set_data_name("vx0");
+//            px0->set_data_type(Broker::DOUBLE);
+//            px0->set_data_double((qrand()%100)/ 1.7);
 
-            px0 = packet.add_data_provided();
-            px0->set_data_name("vx0");
-            px0->set_timestamp(timestamp);
-            px0->set_data_type(Broker::DOUBLE);
-            px0->set_data_double((qrand()%100)/ 1.7);
-
-            py0 = packet.add_data_provided();
-            py0->set_data_name("vy0");
-            py0->set_timestamp(timestamp);
-            py0->set_data_type(Broker::DOUBLE);
-            py0->set_data_double((qrand()%100)/ 1.7);
-
+            for(int i=0; i<100; i++) {
+                py0 = packet.add_data_provided();
+                py0->set_data_name(QString("vy%1").arg(i).toStdString());
+                py0->set_data_type(Broker::DOUBLE);
+                py0->set_data_double((qrand()%100)/ 1.7);
+            }
             dataConnection->provideDataConsumed(&packet);
 
             qDebug() << "[CONSUMED] Size:" << packet.ByteSize();
             qDebug() << "[CONSUMED]" << QString::fromStdString(packet.DebugString());
+            qDebug() << "[CONSUMED]" << "=================================================================";
         }
     }
 }
@@ -62,15 +63,20 @@ void Module::initDataConnection()
             Broker::DataCollection data;
             dataConnection->receiveDataPublished(&data);
 
-            qDebug() << "[PUBLISHED]" << QString::fromStdString(data.DebugString());
+            qDebug() << "[PUBLISHED TCP]" << QString::fromStdString(data.DebugString());
         });
     }
     else {
-        return;
+        dataConnection = new UdpDataConnection(configuration->getIp(), configuration->getPortData());
+        connect(dataConnection, &UdpDataConnection::receivedDataPublished, [this](){
+            Broker::DataCollection data;
+            dataConnection->receiveDataPublished(&data);
+
+            qDebug() << "[PUBLISHED UDP]" << QString::fromStdString(data.DebugString());
+        });
     }
 
     if(!dataConnection->initConnection()) {
-        qDebug() << "[Module::initDataConnection()] Data Connection initialized";
-        return;
+        qDebug() << "[Module::initDataConnection()] Data Connection not initialized";
     }
 }

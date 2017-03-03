@@ -7,6 +7,7 @@
 
 #include "moduleconfiguration.h"
 #include "communication/tcpdataconnection.h"
+#include "communication/udpdataconnection.h"
 
 class Module : public QObject
 {

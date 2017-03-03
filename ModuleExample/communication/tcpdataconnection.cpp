@@ -2,46 +2,48 @@
 
 #include <QTcpSocket>
 #include <QDataStream>
+
+#include <QTcpServer>
 #include <QDebug>
 
 TcpDataConnection::TcpDataConnection(QObject *parent) : AbstractDataConnection(parent)
 {
-    socket = new QTcpSocket();
-    stream = new QDataStream(socket);
-
-    dataOut = new QByteArray();
-    streamOut = new QDataStream(dataOut, QIODevice::ReadWrite);
+    server = new QTcpServer();
+    stream = new QDataStream();
 
     stream->setVersion(QDataStream::Qt_5_7);
-    streamOut->setVersion(QDataStream::Qt_5_7);
 
-    connect(socket, &QTcpSocket::stateChanged, [this](QAbstractSocket::SocketState socketState) {
-        if(socketState == QAbstractSocket::ConnectedState) {
+    connect(server, &QTcpServer::newConnection, [this]() {
+        if(server->hasPendingConnections() && socket == nullptr) {
+            socket = server->nextPendingConnection();
+
+            qDebug() << "[New Client]" << socket->localAddress();
+
+            stream->setDevice(socket);
+            connect(socket, &QTcpSocket::stateChanged, this, &TcpDataConnection::handleClientStateChanged);
+            connect(socket, &QTcpSocket::readyRead, this, &TcpDataConnection::readData);
             setIsReady(true);
         }
         else {
-            setIsReady(false);
+            QTcpSocket *discard = server->nextPendingConnection();
+            discard->abort();
+            discard->deleteLater();
+
+            qDebug() << "[Dropping Client] I am already attending a client";
         }
     });
-
-    connect(socket, &QTcpSocket::readyRead, this, &TcpDataConnection::readData);
 }
 
-TcpDataConnection::TcpDataConnection(
-        const QString& ipAddress, quint16 portNum, QObject *parent) :
+TcpDataConnection::TcpDataConnection(quint16 portNum, QObject *parent) :
     TcpDataConnection(parent)
 {
-    setIp(ipAddress);
     setPort(portNum);
 }
 
 TcpDataConnection::~TcpDataConnection()
 {
-    if(socket) {
-        delete socket;
-    }
     delete stream;
-    delete streamOut;
+    delete server;
 }
 
 void TcpDataConnection::deInitConnection()
@@ -49,28 +51,26 @@ void TcpDataConnection::deInitConnection()
     if(socket) {
         socket->abort();
     }
-
+    server->close();
     bufferReady = false;
-
-    if(stream) {
-        stream->resetStatus();
-    }
+    stream->resetStatus();
+    stream->setDevice(0);
 }
 
-bool TcpDataConnection::initConnection(QString ipAddress, quint16 portNum)
+bool TcpDataConnection::initConnection(quint16 portNum)
 {
-    socket->connectToHost(ipAddress, portNum);
-    return true;
+    deInitConnection();
+    return server->listen(QHostAddress::Any, portNum);;
 }
 
-bool TcpDataConnection::receiveDataPublished(Broker::DataCollection *dataCollection)
+bool TcpDataConnection::receiveDataConsumed(Broker::DataCollection *dataCollection)
 {
     bool ret = dataCollection->ParseFromArray(static_buffer_in, len);
     bufferReady = false;
     return ret;
 }
 
-bool TcpDataConnection::provideDataConsumed(Broker::DataCollection *dataCollection)
+bool TcpDataConnection::provideDataPublished(Broker::DataCollection *dataCollection)
 {
     quint32 writeLen = dataCollection->ByteSize();
 
@@ -85,15 +85,15 @@ bool TcpDataConnection::provideDataConsumed(Broker::DataCollection *dataCollecti
         dataCollection->SerializeToArray(static_buffer_out+integerSize, MAX_BUFFER_SIZE);
         int writtenBytes = socket->write(static_buffer_out, writeLen);
         if(writeLen == (quint64)writtenBytes) {
-            qDebug() << "[TcpDataConnection::provideDataConsumed] len =" << writtenBytes-integerSize;
+            qDebug() << "[TcpDataConnection::provideDataPublished] len =" << writtenBytes-integerSize;
             return true;
         }
 
-        qDebug() << "[TcpDataConnection::provideDataConsumed] Error len != len_sent";
+        qDebug() << "[TcpDataConnection::provideDataPublished] Error len != len_sent";
         return false;
     }
 
-    qDebug() << "[TcpDataConnection::provideDataConsumed] error, len > MAX_BUFFER_SIZE";
+    qDebug() << "[TcpDataConnection::provideDataPublished] error, len > MAX_BUFFER_SIZE";
     return false;
 }
 
@@ -105,7 +105,7 @@ void TcpDataConnection::readData()
 
         stream->startTransaction();
 
-        quint32 packet_len = 0;
+        quint32 packet_len;
 
         (*stream) >> packet_len;
 
@@ -134,7 +134,25 @@ void TcpDataConnection::readData()
             }
 
             bufferReady = true;
-            emit receivedDataPublished();
+            emit receivedDataConsumed();
         }
+    }
+}
+
+void TcpDataConnection::handleClientStateChanged(QAbstractSocket::SocketState state)
+{
+    if(state == QAbstractSocket::UnconnectedState) {
+        if(socket) {
+            socket->disconnect();
+            socket->deleteLater();
+            socket = nullptr;
+            setIsReady(false);
+        }
+    }
+    else if(state == QAbstractSocket::ConnectedState) {
+        setIsReady(true);
+    }
+    else {
+        setIsReady(false);
     }
 }

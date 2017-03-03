@@ -1,5 +1,5 @@
 #include "udpdataconnection.h"
-#include "protocol/data.pb.h"
+#include "../protocol/data.pb.h"
 
 #include <QUdpSocket>
 
@@ -12,7 +12,7 @@ UdpDataConnection::UdpDataConnection(QObject *parent) : AbstractDataConnection(p
 
 UdpDataConnection::UdpDataConnection(const QString &ipAddress,
                                      quint16 portNum, QObject *parent) :
-    UdpDataConnection(parent)
+    AbstractDataConnection(parent)
 {
     setIp(ipAddress);
     setPort(portNum);
@@ -28,23 +28,14 @@ void UdpDataConnection::deInitConnection()
     socket->abort();
 }
 
-bool UdpDataConnection::initConnection(QString ipAddress, quint16 portNum)
+bool UdpDataConnection::initConnection(quint16 portNum)
 {
     setPort(portNum);
-    setIp(ipAddress);
-    bool ret = socket->bind(0);
-    setIsReady(ret);
-    return ret;
+    socket->bind(portNum);
+    return true;
 }
 
-bool UdpDataConnection::receiveDataPublished(Broker::DataCollection *dataCollection)
-{
-    bool ret = dataCollection->ParseFromArray(static_buffer_in, len);
-    bufferReady = false;
-    return ret;
-}
-
-bool UdpDataConnection::provideDataConsumed(Broker::DataCollection *dataCollection)
+bool UdpDataConnection::provideDataPublished(Broker::DataCollection *dataCollection)
 {
     int bytesLen = dataCollection->ByteSize();
 
@@ -89,26 +80,66 @@ bool UdpDataConnection::provideDataConsumed(Broker::DataCollection *dataCollecti
     return true;
 }
 
+bool UdpDataConnection::receiveDataConsumed(Broker::DataCollection *dataCollection)
+{
+    bool ret = dataCollection->ParseFromArray(static_buffer_in, len);
+    bufferReady = false;
+    return ret;
+}
+
+void UdpDataConnection::initConnection(const QString &ipAddress, quint16 portNum)
+{
+    initConnection(portNum);
+    setIp(ipAddress);
+}
+
+void UdpDataConnection::setIp(const QString &value)
+{
+    AbstractDataConnection::setIp(value);
+    setIsReady(true);
+}
+
 void UdpDataConnection::handleDatagram()
 {
     QUdpSocket *udpsocket = (QUdpSocket*)socket;
 
-//    qDebug() << "[UdpDataConnection::provideDataConsumed] received datagram";
+    QHostAddress brokerAddress;
 
     while(udpsocket->hasPendingDatagrams()) {
 
-        len = udpsocket->readDatagram(static_buffer_in, MAX_BUFFER_SIZE);
-
-//        qDebug() << "[UdpDataConnection::provideDataConsumed] read datagram, len=" << len;
+        /*
+         * TODO: brokerIp and brokerPort must be passed elsewhere.
+         * Pass in the controlConnection.
+         */
+        len = udpsocket->readDatagram(static_buffer_in, MAX_BUFFER_SIZE, &brokerAddress, &brokerPort);
+        setBrokerIp(brokerAddress.toString());
+        setIsReady(true);
 
         if(bufferReady) {
             emit overrunIdentified();
         }
 
         bufferReady = true;
-        emit receivedDataPublished();
+        emit receivedDataConsumed();
     }
 }
 
+QString UdpDataConnection::getBrokerIp() const
+{
+    return brokerIp;
+}
 
+void UdpDataConnection::setBrokerIp(const QString &value)
+{
+    brokerIp = value;
+}
 
+quint16 UdpDataConnection::getBrokerPort() const
+{
+    return brokerPort;
+}
+
+void UdpDataConnection::setBrokerPort(const quint16 &value)
+{
+    brokerPort = value;
+}

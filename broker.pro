@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     modules/moduleconfiguration.cpp \
     modules/module.cpp \
     communication/abstractdataconnection.cpp \
-    communication/tcpdataconnection.cpp
+    communication/tcpdataconnection.cpp \
+    communication/udpdataconnection.cpp
 
 HEADERS  += mainwindow.h \
     protocol/data.pb.h \
@@ -50,7 +51,8 @@ HEADERS  += mainwindow.h \
     modules/moduleconfiguration.h \
     modules/module.h \
     communication/abstractdataconnection.h \
-    communication/tcpdataconnection.h
+    communication/tcpdataconnection.h \
+    communication/udpdataconnection.h
 
 FORMS    += mainwindow.ui
 
