@@ -4,22 +4,33 @@
 #include <QObject>
 #include "../protocol/data.pb.h"
 
+#include "abstractdataconnection.h"
+
+#include "modules/moduleconfiguration.h"
+
 class Communication : public QObject
 {
     Q_OBJECT
 public:
-    explicit Communication(QObject *parent = 0);
+    explicit Communication(const ModuleConfiguration *config, QObject *parent = 0);
+    ~Communication();
+
+    void timerEvent(QTimerEvent *event);
 
 signals:
 
-public slots:
+public slots:  
+
+protected:
+
+    void initDataConnection(const ModuleConfiguration *configuration);
 
 private:
 
-    Broker::DataCollection *provided_data;
-    Broker::DataCollection *subscribed_data;
-    Broker::DataDescriptor *descriptor;
+    /* Add here Data and Control Connection */
+    AbstractDataConnection *dataConnection = nullptr;
 
+    const ModuleConfiguration *configuration = nullptr;
 };
 
 #endif // COMMUNICATION_H

@@ -6,8 +6,7 @@
 #include <QUdpSocket>
 
 #include "moduleconfiguration.h"
-#include "communication/tcpdataconnection.h"
-#include "communication/udpdataconnection.h"
+#include "communication/communication.h"
 
 class Module : public QObject
 {
@@ -17,17 +16,7 @@ public:
 
     ~Module();
 
-    void timerEvent(QTimerEvent *event);
-
 protected:
-
-    /*
-     * Prepare Socket connections, it assumes the
-     * module information have already been loaded from JSON descriptor.
-     *
-     */
-    void initControlConnection();
-    void initDataConnection();
 
 signals:
 
@@ -36,9 +25,8 @@ public slots:
 private:
 
     ModuleConfiguration *configuration = nullptr;
+    Communication *communication = nullptr;
 
-    /* Add here Data and Control Connection */
-    AbstractDataConnection *dataConnection = nullptr;
 };
 
 #endif // MODULE_H
