@@ -155,6 +155,16 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
     return true;
 }
 
+const QMap<QString, DataDescriptor> *ModuleConfiguration::getDataPublishedMap() const
+{
+    return &data_published;
+}
+
+const QMap<QString, QStringList *> *ModuleConfiguration::getDataConsumedRoutes() const
+{
+    return &data_consumed;
+}
+
 QString ModuleConfiguration::getId() const
 {
     return id;

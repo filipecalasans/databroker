@@ -16,6 +16,8 @@ public:
 
     ~Module();
 
+    const ModuleConfiguration *getConfiguration();
+
 protected:
 
 signals:

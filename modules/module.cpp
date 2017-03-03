@@ -9,7 +9,6 @@ Module::Module(const QString& configPath, QObject *parent) : QObject(parent)
     configuration->loadFromJsonFile(configPath);
 
     communication = new Communication(configuration);
-
 }
 
 Module::~Module()
@@ -18,4 +17,9 @@ Module::~Module()
     if(communication) {
         delete communication;
     }
+}
+
+const ModuleConfiguration *Module::getConfiguration()
+{
+    return configuration;
 }

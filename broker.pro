@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     modules/module.cpp \
     communication/abstractdataconnection.cpp \
     communication/tcpdataconnection.cpp \
-    communication/udpdataconnection.cpp
+    communication/udpdataconnection.cpp \
+    databroker.cpp
 
 HEADERS  += mainwindow.h \
     protocol/data.pb.h \
@@ -52,7 +53,8 @@ HEADERS  += mainwindow.h \
     modules/module.h \
     communication/abstractdataconnection.h \
     communication/tcpdataconnection.h \
-    communication/udpdataconnection.h
+    communication/udpdataconnection.h \
+    databroker.h
 
 FORMS    += mainwindow.ui
 

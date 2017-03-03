@@ -83,13 +83,23 @@ public:
 
     bool loadFromJsonFile(const QString& jsonPath);
 
+    const QMap<QString, DataDescriptor> *getDataPublishedMap() const;
+    const QMap<QString, QStringList *> *getDataConsumedRoutes() const;
+
 private:
 
     QString id;
     QString name;
     QString description;
 
+    /*
+     * Data Id vs Corresponding data descriptor
+     */
     QMap<QString, DataDescriptor> data_published;
+
+    /*
+     * Source Module, List of data ids.
+     */
     QMap<QString, QStringList*> data_consumed;
 
     bool mandatory = true;
