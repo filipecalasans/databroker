@@ -63,11 +63,11 @@ bool UdpDataConnection::provideDataPublished(Broker::DataCollection *dataCollect
                 Broker::Data *newData = packet.add_data_provided();
                 *newData = dataElement;
                 index++;
-                qDebug() << "[UdpDataConnection::provideDataConsumed] index"
-                         << index << packet.ByteSize() << dataElement.ByteSize();
+//                qDebug() << "[UdpDataConnection::provideDataConsumed] index"
+//                         << index << packet.ByteSize() << dataElement.ByteSize();
             }
             else {
-                qDebug() << "======= BREAK ========";
+//                qDebug() << "======= BREAK ========";
                 break;
             }
         }

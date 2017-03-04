@@ -3,7 +3,6 @@
 
 #include <QUdpSocket>
 
-
 UdpDataConnection::UdpDataConnection(QObject *parent) : AbstractDataConnection(parent)
 {
     socket = new QUdpSocket();
@@ -72,11 +71,11 @@ bool UdpDataConnection::provideDataConsumed(Broker::DataCollection *dataCollecti
                 Broker::Data *newData = packet.add_data_provided();
                 *newData = dataElement;
                 index++;
-                qDebug() << "[UdpDataConnection::provideDataConsumed] index"
-                         << index << packet.ByteSize() << dataElement.ByteSize();
+//                qDebug() << "[UdpDataConnection::provideDataConsumed] index"
+//                         << index << packet.ByteSize() << dataElement.ByteSize();
             }
             else {
-                qDebug() << "======= BREAK ========";
+//                qDebug() << "======= BREAK ========";
                 break;
             }
         }

@@ -1,0 +1,24 @@
+package Broker;
+
+enum ArgumentType {
+    CTRL_INT32 = 0;
+    CTRL_DOUBLE = 1;
+    CTRL_BOOLEAN = 2;
+    CTRL_STRING = 3;
+}
+
+message ControlCommandArguments {
+    required ArgumentType data_type = 1  [default = CTRL_INT32];
+    optional int32 data_int32 = 2;
+    optional double data_double = 3;
+    optional bool data_bool = 4;
+    optional string data_string = 5;
+}
+
+message ControlCommand {
+    required bool reply_required = 1 [default=false];
+    repeated string desitination = 2; //If this field is empty, the broker will look for the pre-loaded map.
+    required string command = 3;
+    repeated ControlCommandArguments args = 4;
+}
+

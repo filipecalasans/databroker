@@ -43,7 +43,10 @@ SOURCES += main.cpp\
     communication/abstractdataconnection.cpp \
     communication/tcpdataconnection.cpp \
     communication/udpdataconnection.cpp \
-    databroker.cpp
+    databroker.cpp \
+    communication/tcpcontrolconnection.cpp \
+    communication/abstractrlconnection.cpp \
+    protocol/control.pb.cc
 
 HEADERS  += mainwindow.h \
     protocol/data.pb.h \
@@ -54,11 +57,15 @@ HEADERS  += mainwindow.h \
     communication/abstractdataconnection.h \
     communication/tcpdataconnection.h \
     communication/udpdataconnection.h \
-    databroker.h
+    databroker.h \
+    communication/tcpcontrolconnection.h \
+    communication/abstractrlconnection.h \
+    protocol/control.pb.h
 
 FORMS    += mainwindow.ui
 
 DISTFILES += \
-    protocol/data.proto
+    protocol/data.proto \
+    protocol/control.proto
 
 

@@ -3,27 +3,39 @@ package Broker;
 //protoc -I=$SRC_DIR --cpp_out=$DST_DIR $SRC_DIR/addressbook.proto
 
 enum DataType {
-    INT32 = 0;
-    DOUBLE = 1;
-    BOOLEAN = 2;
-    STRING = 3;
+    DATA_INT32 = 0;
+    DATA_DOUBLE = 1;
+    DATA_BOOLEAN = 2;
+    DATA_STRING = 3;
 }
 
+// Describes the data provided by the module.
 message DataDescriptor {
-    optional string data_description = 1;
-    required string data_name = 2;
-    required string unit = 3;
-    required DataType data_type = 4  [default = INT32];
+    required string data_id = 1;
+    optional string data_description = 2;
+    required string data_name = 3;
+    required string unit = 4;
+    required DataType data_type = 5  [default = DATA_INT32];
+}
+
+message DataConsumed {
+    required string data_id = 1;
+    required string source = 2;
 }
 
 message DataRegistration {
     optional string provider_name = 1;
     repeated DataDescriptor data_decriptors = 2;
+    repeated DataConsumed data_consumed = 3;
 }
 
+/*
+*
+* data name refers to data_id
+*/
 message Data {
-    required string data_name = 1;
-    required DataType data_type = 2  [default = INT32];
+    required string data_id = 1;
+    required DataType data_type = 2  [default = DATA_INT32];
     optional int32 data_int32 = 3;
     optional double data_double = 4;
     optional bool data_bool = 5;
@@ -32,6 +44,6 @@ message Data {
 
 message DataCollection {
     required uint64 timestamp = 1;
-    optional string provider_name = 2;
+    required string provider_name = 2;
     repeated Data data_provided = 3;
 }

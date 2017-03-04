@@ -9,8 +9,9 @@ Communication::Communication(const ModuleConfiguration *config, QObject *parent)
     configuration(config)
 {
     initDataConnection(configuration);
+    initControlConnection(configuration);
 
-    startTimer(500);
+    //startTimer(500);
 }
 
 Communication::~Communication()
@@ -31,12 +32,12 @@ void Communication::timerEvent(QTimerEvent *event)
             packet.set_provider_name("radio");
             packet.set_timestamp(QDateTime::currentMSecsSinceEpoch());
 
-            Broker::Data *px0, *py0;
+            Broker::Data *py0;
 
             for(int i=0; i<3; i++) {
                 py0 = packet.add_data_provided();
-                py0->set_data_name(QString("vy%1").arg(i).toStdString());
-                py0->set_data_type(Broker::DOUBLE);
+                py0->set_data_id(QString("vy%1").arg(i).toStdString());
+                py0->set_data_type(Broker::DATA_DOUBLE);
                 py0->set_data_double((qrand()%100)/ 1.7);
             }
             dataConnection->provideDataConsumed(&packet);
@@ -73,5 +74,17 @@ void Communication::initDataConnection(const ModuleConfiguration *configuration)
     if(!dataConnection->initConnection()) {
         qDebug() << "[Module::initDataConnection()] Data Connection not initialized";
     }
+}
+
+void Communication::initControlConnection(const ModuleConfiguration *configuration)
+{
+    controlConnection = new TcpControlConnection(configuration->getIp(), configuration->getPortData());
+
+    connect(controlConnection, &TcpControlConnection::receivedControlCmd, [this](){
+        Broker::ControlCommand cmd;
+        controlConnection->receiveControlCommand(&cmd);
+
+        qDebug() << "[CMD RCVD]" << QString::fromStdString(cmd.DebugString());
+    });
 }
 

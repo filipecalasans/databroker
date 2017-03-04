@@ -5,6 +5,7 @@
 #include "../protocol/data.pb.h"
 
 #include "abstractdataconnection.h"
+#include "tcpcontrolconnection.h"
 
 #include "modules/moduleconfiguration.h"
 
@@ -24,11 +25,13 @@ public slots:
 protected:
 
     void initDataConnection(const ModuleConfiguration *configuration);
+    void initControlConnection(const ModuleConfiguration *configuration);
 
 private:
 
     /* Add here Data and Control Connection */
     AbstractDataConnection *dataConnection = nullptr;
+    TcpControlConnection *controlConnection = nullptr;
 
     const ModuleConfiguration *configuration = nullptr;
 };

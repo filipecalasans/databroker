@@ -60,12 +60,12 @@ void Communication::timerEvent(QTimerEvent *event)
         Broker::Data *px0, *py0;
 
         px0 = packet.add_data_provided();
-        px0->set_data_name("px0");
+        px0->set_data_id("px0");
         px0->set_data_type(Broker::DOUBLE);
         px0->set_data_double((qrand()%100)/ 1.7);
 
         py0 = packet.add_data_provided();
-        py0->set_data_name("py0");
+        py0->set_data_id("py0");
         py0->set_data_type(Broker::DOUBLE);
         py0->set_data_double((qrand()%100)/ 1.7);
 
