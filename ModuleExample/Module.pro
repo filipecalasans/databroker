@@ -19,11 +19,14 @@ LIBS += -lpthread
 CCFLAG += -pthread
 
 SOURCES += main.cpp \
-    communication/abstractdataconnection.cpp \
     communication/tcpdataconnection.cpp \
     ../protocol/data.pb.cc \
     communication/communication.cpp \
-    communication/udpdataconnection.cpp
+    communication/udpdataconnection.cpp \
+    communication/tcpcontrolconnection.cpp \
+    communication/abstractcontrolconnection.cpp \
+    communication/abstractdatacontrol.cpp \
+    ../protocol/control.pb.cc
 
 
 # The following define makes your compiler emit warnings if you use
@@ -45,7 +48,11 @@ HEADERS += \
     communication/tcpdataconnection.h \
     ../protocol/data.pb.h \
     communication/communication.h \
-    communication/udpdataconnection.h
+    communication/udpdataconnection.h \
+    communication/tcpcontrolconnection.h \
+    communication/abstractcontrolconnection.h \
+    ../protocol/control.pb.h
 
 DISTFILES += \
-    ../protocol/data.proto
+    ../protocol/data.proto \
+    ../protocol/control.proto

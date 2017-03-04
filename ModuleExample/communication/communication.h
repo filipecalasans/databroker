@@ -4,8 +4,13 @@
 #include <QObject>
 #include <QDebug>
 
+#ifdef TCP_CONNECTION
 #include "tcpdataconnection.h"
+#else
 #include "udpdataconnection.h"
+#endif
+
+#include "tcpcontrolconnection.h"
 
 class Communication : public QObject
 {
@@ -27,6 +32,7 @@ private:
     UdpDataConnection *dataConnection = nullptr;
 #endif
 
+    TcpControlConnection *controlConnection = nullptr;
 };
 
 #endif // COMMUNICATION_H

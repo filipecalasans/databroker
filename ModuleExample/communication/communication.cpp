@@ -1,6 +1,7 @@
 #include "communication.h"
 
 #include "../broker/protocol/data.pb.h"
+#include "../broker/protocol/control.pb.h"
 
 #include <QDateTime>
 
@@ -43,7 +44,24 @@ Communication::Communication(QObject *parent) : QObject(parent)
     }
 #endif
 
-//    startTimer(500);
+    controlConnection = new TcpControlConnection();
+
+    connect(controlConnection, &AbstractControlConnection::receivedControlCommand, [this](){
+        Broker::ControlCommand packet;
+        controlConnection->receiveControlCommand(&packet);
+        qDebug() << "[CONSUMED] Size:" << packet.ByteSize();
+        qDebug() << "[CONSUMED]" << QString::fromStdString(packet.DebugString());
+        qDebug() << "============================================================================";
+    });
+
+    if(!controlConnection->initConnection(6000)) {
+        qDebug() << "Can not init connection";
+    }
+    else {
+        qDebug() << "Listening port" << dataConnection->getPort();
+    }
+
+    //startTimer(500);
 }
 
 void Communication::timerEvent(QTimerEvent *event)
@@ -61,12 +79,12 @@ void Communication::timerEvent(QTimerEvent *event)
 
         px0 = packet.add_data_provided();
         px0->set_data_id("px0");
-        px0->set_data_type(Broker::DOUBLE);
+        px0->set_data_type(Broker::DATA_DOUBLE);
         px0->set_data_double((qrand()%100)/ 1.7);
 
         py0 = packet.add_data_provided();
         py0->set_data_id("py0");
-        py0->set_data_type(Broker::DOUBLE);
+        py0->set_data_type(Broker::DATA_DOUBLE);
         py0->set_data_double((qrand()%100)/ 1.7);
 
         dataConnection->provideDataPublished(&packet);

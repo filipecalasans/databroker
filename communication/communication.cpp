@@ -78,7 +78,7 @@ void Communication::initDataConnection(const ModuleConfiguration *configuration)
 
 void Communication::initControlConnection(const ModuleConfiguration *configuration)
 {
-    controlConnection = new TcpControlConnection(configuration->getIp(), configuration->getPortData());
+    controlConnection = new TcpControlConnection(configuration->getIp(), configuration->getPortControl());
 
     connect(controlConnection, &TcpControlConnection::receivedControlCmd, [this](){
         Broker::ControlCommand cmd;
@@ -87,4 +87,3 @@ void Communication::initControlConnection(const ModuleConfiguration *configurati
         qDebug() << "[CMD RCVD]" << QString::fromStdString(cmd.DebugString());
     });
 }
-
