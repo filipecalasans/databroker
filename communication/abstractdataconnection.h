@@ -20,11 +20,7 @@ public:
     virtual ~AbstractDataConnection();
 
     /* Define the interface for this class */
-    bool initConnection() {
-        deInitConnection();
-        return initConnection(ip, port);
-    }
-
+    virtual bool initConnection();
     virtual void deInitConnection() = 0;
     virtual bool initConnection(QString ipAddress, quint16 portNum) = 0;
     virtual bool receiveDataPublished(Broker::DataCollection *dataCollection) = 0;

@@ -55,6 +55,11 @@ TcpControlConnection::~TcpControlConnection()
     delete streamOut;
 }
 
+bool TcpControlConnection::initConnection()
+{
+    return AbstractControlConnection::initConnection();
+}
+
 void TcpControlConnection::deInitConnection()
 {
     if(socket) {

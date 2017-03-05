@@ -72,4 +72,14 @@ void Communication::initControlConnection(const ModuleConfiguration *configurati
                             configuration->getPortControl());
 }
 
+AbstractDataConnection *Communication::getDataConnection() const
+{
+    return dataConnection;
+}
+
+TcpControlConnection *Communication::getControlConnection() const
+{
+    return controlConnection;
+}
+
 

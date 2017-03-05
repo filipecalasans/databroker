@@ -7,6 +7,12 @@
 
 Communication::Communication(QObject *parent) : QObject(parent)
 {
+    initControlConnection();
+    initDataConnection();
+}
+
+bool Communication::initDataConnection()
+{
 #ifdef TCP_CONNECTION
 
     dataConnection = new TcpDataConnection(6001);
@@ -20,6 +26,7 @@ Communication::Communication(QObject *parent) : QObject(parent)
 
     if(!dataConnection->initConnection(6001)) {
         qDebug() << "Can not init connection";
+        return false;
     }
     else {
         qDebug() << "Listening port 60001";
@@ -38,12 +45,18 @@ Communication::Communication(QObject *parent) : QObject(parent)
 
     if(!dataConnection->initConnection(6001)) {
         qDebug() << "Can not init connection";
+        return false;
     }
     else {
         qDebug() << "Listening Data Server on port" << dataConnection->getPort();
     }
-#endif
 
+#endif
+    return true;
+}
+
+bool Communication::initControlConnection()
+{
     controlConnection = new TcpControlConnection();
 
     connect(controlConnection, &TcpControlConnection::controlStateChanged,
@@ -62,10 +75,12 @@ Communication::Communication(QObject *parent) : QObject(parent)
     });
 
     if(!controlConnection->initConnection(6000)) {
-        qDebug() << "Can not init connection";
+        qDebug() << "Can not init control connection";
+        return false;
     }
     else {
         qDebug() << "Listening Control Server on port" << controlConnection->getPort();
     }
 
+    return true;
 }

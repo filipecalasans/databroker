@@ -47,4 +47,10 @@ void DataBroker::loadConfiguration()
     dataRate = settings.value("data_rate", 0).toInt();
 }
 
+QList<Module *> DataBroker::getModules()
+{
+    return modules.values();
+}
+
+
 

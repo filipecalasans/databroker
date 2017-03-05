@@ -21,6 +21,10 @@ public:
 
     void sendDataConsumed(const QVariantMap &data);
 
+    TcpControlConnection *getControlConnection() const;
+
+    AbstractDataConnection *getDataConnection() const;
+
 signals:
 
     void receivedDataPublished();

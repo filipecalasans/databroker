@@ -25,6 +25,11 @@ AbstractDataConnection::~AbstractDataConnection()
     delete []static_buffer_out;
 }
 
+bool AbstractDataConnection::initConnection() {
+    deInitConnection();
+    return initConnection(ip, port);
+}
+
 bool AbstractDataConnection::getIsReady() const
 {
     return isReady;

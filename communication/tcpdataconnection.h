@@ -15,6 +15,7 @@ public:
 
     virtual ~TcpDataConnection();
 
+    virtual bool initConnection();
     virtual void deInitConnection();
     virtual bool initConnection(QString ipAddress, quint16 portNum);
     virtual bool receiveDataPublished(Broker::DataCollection *dataCollection);

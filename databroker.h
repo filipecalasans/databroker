@@ -17,6 +17,8 @@ public:
     void loadModules();
     void loadConfiguration();
 
+    QList<Module*> getModules();
+
 signals:
 
 public slots:

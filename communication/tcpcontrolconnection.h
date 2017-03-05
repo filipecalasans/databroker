@@ -35,6 +35,7 @@ public:
 
     virtual ~TcpControlConnection();
 
+    virtual bool initConnection();
     virtual void deInitConnection();
     virtual bool initConnection(QString ipAddress, quint16 portNum);
     virtual bool receiveControlCommand(Broker::ControlCommand *cmd);

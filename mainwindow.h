@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "databroker.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -15,8 +17,25 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void on_resetButton_clicked();
+
+    void on_readyButton_clicked();
+
+    void on_startButton_clicked();
+
+    void on_pauseButton_clicked();
+
+    void on_resumeButton_clicked();
+
+    void on_disconnectButton_clicked();
+
+    void on_connectButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+
+    DataBroker *broker = nullptr;
 };
 
 #endif // MAINWINDOW_H

@@ -23,3 +23,9 @@ const ModuleConfiguration *Module::getConfiguration()
 {
     return configuration;
 }
+
+Communication *Module::getCommunication() const
+{
+    return communication;
+}
+

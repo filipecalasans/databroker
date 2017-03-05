@@ -44,6 +44,11 @@ TcpDataConnection::~TcpDataConnection()
     delete streamOut;
 }
 
+bool TcpDataConnection::initConnection()
+{
+    return AbstractDataConnection::initConnection();
+}
+
 void TcpDataConnection::deInitConnection()
 {
     if(socket) {

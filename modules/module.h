@@ -18,6 +18,8 @@ public:
 
     const ModuleConfiguration *getConfiguration();
 
+    Communication *getCommunication() const;
+
 protected:
 
 signals:

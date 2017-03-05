@@ -25,6 +25,11 @@ AbstractControlConnection::~AbstractControlConnection()
     delete []static_buffer_out;
 }
 
+bool AbstractControlConnection::initConnection() {
+    deInitConnection();
+    return initConnection(ip, port);
+}
+
 bool AbstractControlConnection::getIsReady() const
 {
     return isReady;

@@ -18,6 +18,11 @@ class Communication : public QObject
 public:
     explicit Communication(QObject *parent = 0);
 
+protected:
+
+    bool initDataConnection();
+    bool initControlConnection();
+
 signals:
 
 public slots:
