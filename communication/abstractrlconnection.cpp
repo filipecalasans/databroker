@@ -25,22 +25,10 @@ AbstractControlConnection::~AbstractControlConnection()
     delete []static_buffer_out;
 }
 
-bool AbstractControlConnection::initConnection() {
+bool AbstractControlConnection::initConnection()
+{
     deInitConnection();
     return initConnection(ip, port);
-}
-
-bool AbstractControlConnection::getIsReady() const
-{
-    return isReady;
-}
-
-void AbstractControlConnection::setIsReady(bool value)
-{
-    if(value != isReady) {
-        isReady = value;
-        connectionReadyChanged(isReady);
-    }
 }
 
 QString AbstractControlConnection::getIp() const

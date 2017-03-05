@@ -70,6 +70,11 @@ void Communication::initControlConnection(const ModuleConfiguration *configurati
     controlConnection = new TcpControlConnection(
                             configuration->getIp(),
                             configuration->getPortControl());
+
+    connect(controlConnection, &TcpControlConnection::controlStateChanged,
+            [this](TcpControlConnection::ControlStateType state){
+        qDebug() << "[STATE RCVD]" << state;
+    });
 }
 
 AbstractDataConnection *Communication::getDataConnection() const

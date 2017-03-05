@@ -62,7 +62,7 @@ bool Communication::initControlConnection()
     connect(controlConnection, &TcpControlConnection::controlStateChanged,
             [this](TcpControlConnection::ControlStateType state) {
 
-        qDebug() << QString("[STATE] %1").arg(state);
+        qDebug() << "[STATE]" << state;
         controlConnection->notifyMyState();
     });
 

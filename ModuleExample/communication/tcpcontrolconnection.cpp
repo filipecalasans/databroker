@@ -35,7 +35,6 @@ TcpControlConnection::TcpControlConnection(QObject *parent) : AbstractControlCon
             stream->setDevice(socket);
             connect(socket, &QTcpSocket::stateChanged, this, &TcpControlConnection::handleClientStateChanged);
             connect(socket, &QTcpSocket::readyRead, this, &TcpControlConnection::readData);
-            //setIsReady(true);
             setState(ControlStateType::STATE_IDLE);
         }
         else {
@@ -142,6 +141,7 @@ bool TcpControlConnection::notifyMyState()
         break;
     }
 
+    stateNotification.set_reply_required(false);
     return sendControlCommand(&stateNotification);
 }
 
@@ -152,7 +152,10 @@ TcpControlConnection::ControlStateType TcpControlConnection::getState() const
 
 void TcpControlConnection::setState(const ControlStateType &value)
 {
-    state = value;
+    if(value != state) {
+        state = value;
+        emit controlStateChanged(state);
+    }
 }
 
 void TcpControlConnection::runStateTransition(Broker::ControlCommand *cmd)
@@ -277,9 +280,10 @@ void TcpControlConnection::readData()
                     runStateTransition(&cmd);
                 }
             }
-
-            bufferReady = true;
-            emit receivedControlCommand();
+            else {
+                bufferReady = true;
+                emit receivedControlCommand();
+            }
         }
     }
 }
@@ -288,19 +292,24 @@ void TcpControlConnection::handleClientStateChanged(QAbstractSocket::SocketState
 {
     if(state == QAbstractSocket::UnconnectedState) {
         if(socket) {
+            qDebug() << "[Client gone]" << socket->localAddress();
             socket->disconnect();
             socket->deleteLater();
             socket = nullptr;
 //            setIsReady(false);
+
         }
+        qDebug() << "I am setting to disconnected";
         setState(ControlStateType::STATE_DISCONNECTED);
     }
     else if(state == QAbstractSocket::ConnectedState) {
 //        setIsReady(true);
+        qDebug() << "I am setting to IDLE";
         setState(ControlStateType::STATE_IDLE);
     }
     else {
 //        setIsReady(false);
+        qDebug() << "I am setting to disconnected, just in case.";
         setState(ControlStateType::STATE_DISCONNECTED);
     }
 }

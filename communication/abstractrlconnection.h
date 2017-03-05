@@ -27,9 +27,6 @@ public:
     virtual bool sendControlCommand(Broker::ControlCommand *cmd) = 0;
     virtual bool receiveControlCommand(Broker::ControlCommand *cmd) = 0;
 
-    bool getIsReady() const;
-    void setIsReady(bool value);
-
     QString getIp() const;
     void setIp(const QString &value);
 
@@ -47,7 +44,6 @@ protected:
     QString ip;
     quint16 port = 0;
     QAbstractSocket *socket = nullptr;
-    bool isReady = false;
 
     bool bufferReady = false;
 

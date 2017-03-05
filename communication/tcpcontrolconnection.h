@@ -56,7 +56,7 @@ public:
 
 signals:
 
-    void controlStateChanged(const ControlStateType& state);
+    void controlStateChanged(const ControlStateType &state);
 
 protected:
 

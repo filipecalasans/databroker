@@ -28,10 +28,10 @@ TcpControlConnection::TcpControlConnection(QObject *parent) : AbstractControlCon
 
     connect(socket, &QTcpSocket::stateChanged, [this](QAbstractSocket::SocketState socketState) {
         if(socketState == QAbstractSocket::ConnectedState) {
-            setIsReady(true);
+            setState(ControlStateType::STATE_IDLE);
         }
         else {
-            setIsReady(false);
+            setState(ControlStateType::STATE_DISCONNECTED);
         }
     });
 
@@ -88,7 +88,7 @@ bool TcpControlConnection::receiveControlCommand(Broker::ControlCommand *cmd)
 
 bool TcpControlConnection::sendControlCommand(Broker::ControlCommand *cmd)
 {
-    if(getIsReady()) {
+    if(getState() == STATE_DISCONNECTED) {
         return false;
     }
 
@@ -242,9 +242,10 @@ void TcpControlConnection::readData()
                     runStateTransition(&cmd);
                 }
             }
-
-            bufferReady = true;
-            emit receivedControlCommand();
+            else {
+                bufferReady = true;
+                emit receivedControlCommand();
+            }
         }
     }
 }
