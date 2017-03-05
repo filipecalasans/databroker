@@ -18,8 +18,6 @@ class Communication : public QObject
 public:
     explicit Communication(QObject *parent = 0);
 
-    void timerEvent(QTimerEvent *event);
-
 signals:
 
 public slots:

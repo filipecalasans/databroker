@@ -13,12 +13,17 @@ class Communication : public QObject
 {
     Q_OBJECT
 public:
+
     explicit Communication(const ModuleConfiguration *config, QObject *parent = 0);
     ~Communication();
 
     void timerEvent(QTimerEvent *event);
 
+    void sendDataConsumed(const QVariantMap &data);
+
 signals:
+
+    void receivedDataPublished();
 
 public slots:  
 
@@ -34,6 +39,7 @@ private:
     TcpControlConnection *controlConnection = nullptr;
 
     const ModuleConfiguration *configuration = nullptr;
+
 };
 
 #endif // COMMUNICATION_H

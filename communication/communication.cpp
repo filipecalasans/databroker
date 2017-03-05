@@ -10,7 +10,6 @@ Communication::Communication(const ModuleConfiguration *config, QObject *parent)
 {
     initDataConnection(configuration);
     initControlConnection(configuration);
-
     //startTimer(500);
 }
 
@@ -53,23 +52,13 @@ void Communication::initDataConnection(const ModuleConfiguration *configuration)
 {
     if(configuration->getDataSocketType() == QAbstractSocket::TcpSocket) {
         dataConnection = new TcpDataConnection(configuration->getIp(), configuration->getPortData());
-
-        connect(dataConnection, &TcpDataConnection::receivedDataPublished, [this](){
-            Broker::DataCollection data;
-            dataConnection->receiveDataPublished(&data);
-
-            qDebug() << "[PUBLISHED TCP]" << QString::fromStdString(data.DebugString());
-        });
     }
     else {
         dataConnection = new UdpDataConnection(configuration->getIp(), configuration->getPortData());
-        connect(dataConnection, &UdpDataConnection::receivedDataPublished, [this](){
-            Broker::DataCollection data;
-            dataConnection->receiveDataPublished(&data);
-
-            qDebug() << "[PUBLISHED UDP]" << QString::fromStdString(data.DebugString());
-        });
     }
+
+    connect(dataConnection, &AbstractDataConnection::receivedDataPublished,
+            this, &Communication::receivedDataPublished);
 
     if(!dataConnection->initConnection()) {
         qDebug() << "[Module::initDataConnection()] Data Connection not initialized";
@@ -78,12 +67,9 @@ void Communication::initDataConnection(const ModuleConfiguration *configuration)
 
 void Communication::initControlConnection(const ModuleConfiguration *configuration)
 {
-    controlConnection = new TcpControlConnection(configuration->getIp(), configuration->getPortControl());
-
-    connect(controlConnection, &TcpControlConnection::receivedControlCmd, [this](){
-        Broker::ControlCommand cmd;
-        controlConnection->receiveControlCommand(&cmd);
-
-        qDebug() << "[CMD RCVD]" << QString::fromStdString(cmd.DebugString());
-    });
+    controlConnection = new TcpControlConnection(
+                            configuration->getIp(),
+                            configuration->getPortControl());
 }
+
+

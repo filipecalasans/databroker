@@ -10,8 +10,7 @@ public:
     UdpDataConnection(QObject *parent = 0);
     UdpDataConnection(const QString& ipAddress, quint16 portNum, QObject *parent = 0);
 
-    ~UdpDataConnection();
-
+    virtual ~UdpDataConnection();
 
     virtual void deInitConnection();
     virtual bool initConnection(quint16 portNum);

@@ -4,6 +4,17 @@
 #include <QDataStream>
 #include <QDebug>
 
+const QString TcpControlConnection::CMD_RESET = QString("RESET");
+const QString TcpControlConnection::CMD_READY = QString("READY");
+const QString TcpControlConnection::CMD_START = QString("START");
+const QString TcpControlConnection::CMD_PAUSE = QString("PAUSE");
+const QString TcpControlConnection::CMD_RESUME = QString("RESUME");
+
+const QString TcpControlConnection::REPLY_IDLE = QString("IDLE");
+const QString TcpControlConnection::REPLY_READY = QString("READY");
+const QString TcpControlConnection::REPLY_RUNNING = QString("RUNNING");
+const QString TcpControlConnection::REPLY_PAUSE = QString("PAUSE");
+
 TcpControlConnection::TcpControlConnection(QObject *parent) : AbstractControlConnection(parent)
 {
     socket = new QTcpSocket();
@@ -72,6 +83,10 @@ bool TcpControlConnection::receiveControlCommand(Broker::ControlCommand *cmd)
 
 bool TcpControlConnection::sendControlCommand(Broker::ControlCommand *cmd)
 {
+    if(getIsReady()) {
+        return false;
+    }
+
     quint32 writeLen = cmd->ByteSize();
 
     QByteArray array;
@@ -95,6 +110,88 @@ bool TcpControlConnection::sendControlCommand(Broker::ControlCommand *cmd)
 
     qDebug() << "[TcpControlConnection::provideDataConsumed] error, len > MAX_BUFFER_SIZE";
     return false;
+}
+
+bool TcpControlConnection::sendDefaultResetCommand()
+{
+    Broker::ControlCommand cmd;
+    cmd.set_command(CMD_RESET.toStdString().c_str());
+    cmd.set_reply_required(true);
+    return sendControlCommand(&cmd);
+}
+
+bool TcpControlConnection::sendDefaultReadyCommand()
+{
+    Broker::ControlCommand cmd;
+    cmd.set_command(CMD_READY.toStdString().c_str());
+    cmd.set_reply_required(true);
+    return sendControlCommand(&cmd);
+}
+
+bool TcpControlConnection::sendDefaultStartCommand()
+{
+    Broker::ControlCommand cmd;
+    cmd.set_command(CMD_START.toStdString().c_str());
+    cmd.set_reply_required(true);
+    return sendControlCommand(&cmd);
+}
+
+bool TcpControlConnection::sendDefaultPauseCommand()
+{
+    Broker::ControlCommand cmd;
+    cmd.set_command(CMD_PAUSE.toStdString().c_str());
+    cmd.set_reply_required(true);
+    return sendControlCommand(&cmd);
+}
+
+TcpControlConnection::ControlStateType TcpControlConnection::getState() const
+{
+    return state;
+}
+
+void TcpControlConnection::setState(const ControlStateType &value)
+{
+    if(state != value) {
+        state = value;
+        emit controlStateChanged(state);
+    }
+}
+
+void TcpControlConnection::runStateTransition(Broker::ControlCommand *cmd)
+{
+    QString command(cmd->command().c_str());
+
+    ControlStateType nxtState = getState();
+
+    if(command == REPLY_IDLE) {
+        nxtState = STATE_IDLE;
+    } else if(command == REPLY_RUNNING) {
+        nxtState = STATE_RUNNING;
+    } else if(command == REPLY_READY) {
+        nxtState = STATE_READY;
+    } else if(command == REPLY_PAUSE) {
+        nxtState = STATE_PAUSE;
+    }
+
+    setState(nxtState);
+}
+
+bool TcpControlConnection::isDefaultControlCommand(Broker::ControlCommand *cmd)
+{
+    if(cmd->command() == REPLY_IDLE.toStdString()) { return true; }
+    if(cmd->command() == REPLY_PAUSE.toStdString()) { return true; }
+    if(cmd->command() == REPLY_READY.toStdString()) { return true; }
+    if(cmd->command() == REPLY_RUNNING.toStdString()) { return true; }
+
+    return false;
+}
+
+bool TcpControlConnection::sendDefaultResumeCommand()
+{
+    Broker::ControlCommand cmd;
+    cmd.set_command(CMD_RESUME.toStdString().c_str());
+    cmd.set_reply_required(true);
+    return  sendControlCommand(&cmd);
 }
 
 void TcpControlConnection::readData()
@@ -131,6 +228,14 @@ void TcpControlConnection::readData()
 
             if(emitOverrun) {
                 emit overrunIdentified();
+            }
+
+
+            Broker::ControlCommand cmd;
+            if(receiveControlCommand(&cmd)) {
+                if(isDefaultControlCommand(&cmd)) {
+                    runStateTransition(&cmd);
+                }
             }
 
             bufferReady = true;

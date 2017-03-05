@@ -6,6 +6,15 @@
 
 DataBroker::DataBroker(QObject *parent) : QObject(parent)
 {
+    QString workingDirectoryPath = "/home/filipe/Documents/Workspace/portfolio/simulation_framework/broker/config";
+
+    QDir workingDir(workingDirectoryPath);
+    if(!QDir::setCurrent(workingDirectoryPath)) {
+        qDebug() << workingDir << "does not exist.";
+        return;
+    }
+
+    loadConfiguration();
     loadModules();
 }
 
@@ -17,16 +26,6 @@ DataBroker::~DataBroker()
 
 void DataBroker::loadModules()
 {
-    /* TODO: change this */
-
-    QString workingDirectoryPath = "/home/filipe/Documents/Workspace/portfolio/simulation_framework/broker/config";
-
-    QDir workingDir(workingDirectoryPath);
-    if(!QDir::setCurrent(workingDirectoryPath)) {
-        qDebug() << workingDir << "does not exist.";
-        return;
-    }
-
     QSettings settings("config.ini", QSettings::IniFormat);
 
     settings.beginGroup("modules");
@@ -38,3 +37,14 @@ void DataBroker::loadModules()
         qDebug() << moduleId << "=" << modulePath;
     }
 }
+
+void DataBroker::loadConfiguration()
+{
+    QSettings settings("config.ini", QSettings::IniFormat);
+
+    settings.beginGroup("configuration");
+
+    dataRate = settings.value("data_rate", 0).toInt();
+}
+
+

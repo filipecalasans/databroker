@@ -15,6 +15,7 @@ public:
     ~DataBroker();
 
     void loadModules();
+    void loadConfiguration();
 
 signals:
 
@@ -22,6 +23,7 @@ public slots:
 
 private:
 
+    int dataRate = 0;
     QMap <QString, Module*> modules;
 
 };

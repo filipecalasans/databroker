@@ -7,6 +7,7 @@
 
 class TcpDataConnection : public AbstractDataConnection
 {
+    Q_OBJECT
 public:
 
     explicit TcpDataConnection(QObject *parent = 0);
