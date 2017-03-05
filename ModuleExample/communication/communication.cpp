@@ -50,7 +50,7 @@ Communication::Communication(QObject *parent) : QObject(parent)
             [this](TcpControlConnection::ControlStateType state) {
 
         qDebug() << QString("[STATE] %1").arg(state);
-
+        controlConnection->notifyMyState();
     });
 
     connect(controlConnection, &AbstractControlConnection::receivedControlCommand, [this](){
