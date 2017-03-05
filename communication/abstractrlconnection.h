@@ -41,7 +41,7 @@ public:
 
 signals:
 
-    void receivedControlCmd();
+    void receivedControlCommand();
     void overrunIdentified();
     void connectionReadyChanged(bool ready);
 

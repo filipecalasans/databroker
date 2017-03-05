@@ -22,6 +22,7 @@ AbstractControlConnection::~AbstractControlConnection()
     delete []static_buffer_out;
 }
 
+/*
 bool AbstractControlConnection::getIsReady() const
 {
     return isReady;
@@ -33,7 +34,7 @@ void AbstractControlConnection::setIsReady(bool value)
         isReady = value;
         connectionReadyChanged(isReady);
     }
-}
+}*/
 
 QString AbstractControlConnection::getIp() const
 {

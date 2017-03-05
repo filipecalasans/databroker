@@ -40,11 +40,18 @@ Communication::Communication(QObject *parent) : QObject(parent)
         qDebug() << "Can not init connection";
     }
     else {
-        qDebug() << "Listening port" << dataConnection->getPort();
+        qDebug() << "Listening Data Server on port" << dataConnection->getPort();
     }
 #endif
 
     controlConnection = new TcpControlConnection();
+
+    connect(controlConnection, &TcpControlConnection::controlStateChanged,
+            [this](TcpControlConnection::ControlStateType state) {
+
+        qDebug() << QString("[STATE] %1").arg(state);
+
+    });
 
     connect(controlConnection, &AbstractControlConnection::receivedControlCommand, [this](){
         Broker::ControlCommand packet;
@@ -58,7 +65,7 @@ Communication::Communication(QObject *parent) : QObject(parent)
         qDebug() << "Can not init connection";
     }
     else {
-        qDebug() << "Listening port" << dataConnection->getPort();
+        qDebug() << "Listening Control Server on port" << controlConnection->getPort();
     }
 
 }

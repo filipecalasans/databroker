@@ -52,6 +52,7 @@ public:
 
     ControlStateType getState() const;
 
+
 signals:
 
     void controlStateChanged(const ControlStateType& state);

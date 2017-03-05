@@ -30,7 +30,7 @@ public:
     virtual bool receiveControlCommand(Broker::ControlCommand *cmd) = 0;
     virtual bool sendControlCommand(Broker::ControlCommand *cmd) = 0;
 
-    bool getIsReady() const;
+//    bool getIsReady() const;
 
     quint16 getPort() const;
     void setPort(const quint16 &value);
@@ -42,11 +42,11 @@ signals:
 
     void receivedControlCommand();
     void overrunIdentified();
-    void connectionReadyChanged(bool ready);
+//    void connectionReadyChanged(bool ready);
 
 protected:
 
-    void setIsReady(bool value);
+//    void setIsReady(bool value);
 
     QString ip;
     quint16 port = 0;

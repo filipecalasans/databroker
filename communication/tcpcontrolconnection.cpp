@@ -239,7 +239,7 @@ void TcpControlConnection::readData()
             }
 
             bufferReady = true;
-            emit receivedControlCmd();
+            emit receivedControlCommand();
         }
     }
 }
