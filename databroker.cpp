@@ -56,6 +56,17 @@ QList<Module *> DataBroker::getModules()
 void DataBroker::routeCommand(Broker::ControlCommand *command)
 {
     Q_UNUSED(command)
+
+    if(command->desitination_size() == 1) {
+        QString destination = QString(command->desitination(0).c_str());
+        if(destination == "all"){
+            for(Module *module : modules) {
+                module->sendControlCommand(command);
+            }
+            return;
+        }
+    }
+
     for(int i=0; i<command->desitination_size(); i++) {
         QString destination = QString(command->desitination(i).c_str());
         qDebug() << "[ROUTING CMD] Dest:" << destination;
