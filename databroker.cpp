@@ -74,7 +74,9 @@ void DataBroker::routeCommand(Broker::ControlCommand *command)
         qDebug() << "===============================================================";
         if(modules.contains(destination)) {
             Module *module = modules.value(destination);
-            module->sendControlCommand(command);
+            if(!module->sendControlCommand(command)) {
+                qDebug() << "[CANT ROUT COMMAND]";
+            }
         }
     }
 }

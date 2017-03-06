@@ -70,11 +70,12 @@ void Module::fromVariantToProtoDataType(const QVariant &dataVariant, Broker::Dat
     return;
 }
 
-void Module::sendControlCommand(Broker::ControlCommand *command)
+bool Module::sendControlCommand(Broker::ControlCommand *command)
 {
     if(communication) {
-        communication->getControlConnection()->sendControlCommand(command);
+        return communication->getControlConnection()->sendControlCommand(command);
     }
+    return false;
 }
 
 void Module::initLiveDataMapFromConfiguration()
