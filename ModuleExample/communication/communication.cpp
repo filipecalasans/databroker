@@ -4,11 +4,14 @@
 #include "../broker/protocol/control.pb.h"
 
 #include <QDateTime>
+#include <QTimerEvent>
 
 Communication::Communication(QObject *parent) : QObject(parent)
 {
     initControlConnection();
     initDataConnection();
+
+    startTimer(500);
 }
 
 bool Communication::initDataConnection()
@@ -38,8 +41,8 @@ bool Communication::initDataConnection()
     connect(dataConnection, &AbstractDataConnection::receivedDataConsumed, [this](){
         Broker::DataCollection packet;
         dataConnection->receiveDataConsumed(&packet);
-        qDebug() << "[CONSUMED] Size:" << packet.ByteSize();
-        qDebug() << "[CONSUMED]" << QString::fromStdString(packet.DebugString());
+        qDebug() << "[RCVD CONSUMED] Size:" << packet.ByteSize();
+        qDebug() << "[RCVD CONSUMED]" << QString::fromStdString(packet.DebugString());
         qDebug() << "============================================================================";
     });
 
@@ -69,8 +72,8 @@ bool Communication::initControlConnection()
     connect(controlConnection, &AbstractControlConnection::receivedControlCommand, [this](){
         Broker::ControlCommand packet;
         controlConnection->receiveControlCommand(&packet);
-        qDebug() << "[CONSUMED] Size:" << packet.ByteSize();
-        qDebug() << "[CONSUMED]" << QString::fromStdString(packet.DebugString());
+        qDebug() << "[RCVD CONTROL] Size:" << packet.ByteSize();
+        qDebug() << "[RCVD CONTROL]" << QString::fromStdString(packet.DebugString());
         qDebug() << "============================================================================";
     });
 
@@ -83,4 +86,26 @@ bool Communication::initControlConnection()
     }
 
     return true;
+}
+
+void Communication::timerEvent(QTimerEvent *event)
+{
+    event->accept();
+
+    if(controlConnection->getState() == TcpControlConnection::STATE_RUNNING) {
+        Broker::DataCollection data;
+
+        data.set_provider_name("vision");
+        data.set_timestamp(QDateTime::currentDateTime().toMSecsSinceEpoch());
+        for(int i=0; i<5; i++) {
+            Broker::Data *p = data.add_data_provided();
+            p->set_data_id(QString("p%1").arg(i).toStdString());
+            p->set_data_type(Broker::DATA_DOUBLE);
+            p->set_data_double(qrand()/1.76);
+        }
+
+        if(dataConnection->getIsReady()) {
+            dataConnection->provideDataPublished(&data);
+        }
+    }
 }

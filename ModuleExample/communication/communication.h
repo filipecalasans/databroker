@@ -16,7 +16,10 @@ class Communication : public QObject
 {
     Q_OBJECT
 public:
+
     explicit Communication(QObject *parent = 0);
+
+    void timerEvent(QTimerEvent *event);
 
 protected:
 

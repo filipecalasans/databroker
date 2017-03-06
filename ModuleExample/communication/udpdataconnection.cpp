@@ -37,6 +37,7 @@ bool UdpDataConnection::initConnection(quint16 portNum)
 
 bool UdpDataConnection::provideDataPublished(Broker::DataCollection *dataCollection)
 {
+
     int bytesLen = dataCollection->ByteSize();
 
     Broker::DataCollection header;
@@ -73,7 +74,7 @@ bool UdpDataConnection::provideDataPublished(Broker::DataCollection *dataCollect
         }
 
         packet.SerializeToArray(static_buffer_out, MAX_DATAGRAM_SIZE);
-        ((QUdpSocket*)socket)->writeDatagram(static_buffer_out, packet.ByteSize(), QHostAddress(ip), port);
+        ((QUdpSocket*)socket)->writeDatagram(static_buffer_out, packet.ByteSize(), QHostAddress(brokerIp), brokerPort);
         payloadLen -= (packet.ByteSize() - headerLen);
     }
 
@@ -113,7 +114,20 @@ void UdpDataConnection::handleDatagram()
          */
         len = udpsocket->readDatagram(static_buffer_in, MAX_BUFFER_SIZE, &brokerAddress, &brokerPort);
         setBrokerIp(brokerAddress.toString());
+
+        bool ignoreDatagram = false;
+        if(!getIsReady()) {
+            ignoreDatagram = true;
+        }
+
+        qDebug() << "[HANDLE DATAGRAM] ignore?" << ignoreDatagram;
+
         setIsReady(true);
+
+        if(ignoreDatagram) { // Ignores the first datagram !!!
+            qDebug() << "[HANDLE DATAGRAM] Received Empty Datagram";
+            continue;
+        }
 
         if(bufferReady) {
             emit overrunIdentified();

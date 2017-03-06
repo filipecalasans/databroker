@@ -13,10 +13,12 @@ public:
 
     virtual ~UdpDataConnection();
 
+    virtual bool initConnection();
     virtual void deInitConnection();
     virtual bool initConnection(QString ipAddress, quint16 portNum);
     virtual bool receiveDataPublished(Broker::DataCollection *dataCollection);
     virtual bool provideDataConsumed(Broker::DataCollection *dataCollection);
+
 
 private slots:
 
@@ -25,6 +27,8 @@ private slots:
 private:
 
     static const int MAX_DATAGRAM_SIZE = 1000;
+
+    bool sendFirstDatagram();
 };
 
 #endif // UDPDATACONNECTION_H

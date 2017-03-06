@@ -10,7 +10,21 @@ Communication::Communication(const ModuleConfiguration *config, QObject *parent)
 {
     initDataConnection(configuration);
     initControlConnection(configuration);
-    //startTimer(500);
+
+    connect(controlConnection, &TcpControlConnection::controlStateChanged,
+            [this](TcpControlConnection::ControlStateType state){
+
+        if(state == TcpControlConnection::STATE_IDLE) {
+            dataConnection->deInitConnection();
+        }
+        else if(state == TcpControlConnection::STATE_READY) {
+            if(!dataConnection->initConnection()) {
+                controlConnection->sendDefaultResetCommand();
+            }
+        }
+
+        qDebug() << "[STATE RCVD]" << state;
+    });
 }
 
 Communication::~Communication()
@@ -39,11 +53,12 @@ void Communication::timerEvent(QTimerEvent *event)
                 py0->set_data_type(Broker::DATA_DOUBLE);
                 py0->set_data_double((qrand()%100)/ 1.7);
             }
+
             dataConnection->provideDataConsumed(&packet);
 
-            qDebug() << "[CONSUMED] Size:" << packet.ByteSize();
-            qDebug() << "[CONSUMED]" << QString::fromStdString(packet.DebugString());
-            qDebug() << "[CONSUMED]" << "=================================================================";
+            qDebug() << "[PROVIDE CONSUMED] Size:" << packet.ByteSize();
+            qDebug() << "[PROVIDE CONSUMED]" << QString::fromStdString(packet.DebugString());
+            qDebug() << "[PROVIDE CONSUMED]" << "=================================================================";
         }
     }
 }
@@ -59,10 +74,6 @@ void Communication::initDataConnection(const ModuleConfiguration *configuration)
 
     connect(dataConnection, &AbstractDataConnection::receivedDataPublished,
             this, &Communication::receivedDataPublished);
-
-    if(!dataConnection->initConnection()) {
-        qDebug() << "[Module::initDataConnection()] Data Connection not initialized";
-    }
 }
 
 void Communication::initControlConnection(const ModuleConfiguration *configuration)
@@ -70,11 +81,6 @@ void Communication::initControlConnection(const ModuleConfiguration *configurati
     controlConnection = new TcpControlConnection(
                             configuration->getIp(),
                             configuration->getPortControl());
-
-    connect(controlConnection, &TcpControlConnection::controlStateChanged,
-            [this](TcpControlConnection::ControlStateType state){
-        qDebug() << "[STATE RCVD]" << state;
-    });
 }
 
 AbstractDataConnection *Communication::getDataConnection() const

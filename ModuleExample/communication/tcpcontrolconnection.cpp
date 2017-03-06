@@ -296,20 +296,13 @@ void TcpControlConnection::handleClientStateChanged(QAbstractSocket::SocketState
             socket->disconnect();
             socket->deleteLater();
             socket = nullptr;
-//            setIsReady(false);
-
         }
-        qDebug() << "I am setting to disconnected";
         setState(ControlStateType::STATE_DISCONNECTED);
     }
     else if(state == QAbstractSocket::ConnectedState) {
-//        setIsReady(true);
-        qDebug() << "I am setting to IDLE";
         setState(ControlStateType::STATE_IDLE);
     }
     else {
-//        setIsReady(false);
-        qDebug() << "I am setting to disconnected, just in case.";
         setState(ControlStateType::STATE_DISCONNECTED);
     }
 }

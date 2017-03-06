@@ -78,7 +78,7 @@ void Module::initLiveDataMapFromConfiguration()
 
 void Module::processDataPublishedReceived()
 {
-    Q_ASSERT(configuration);
+    //Q_ASSERT(configuration);
 
     Broker::DataCollection dataPacket;
     communication->getDataConnection()->receiveDataPublished(&dataPacket);
@@ -90,12 +90,14 @@ void Module::processDataPublishedReceived()
     if(lastTimeStamp > dataPacket.timestamp()) { qDebug() << "[lastTimeStamp > data.timestamp()]"; return; }
 
     if(configuration) {
-        if(dataPacket.provider_name() != configuration->getName().toStdString()) {
+        if(dataPacket.provider_name() != configuration->getId().toStdString()) {
             qDebug() << __FILE__ << __LINE__ << "data.name() != module.name()"
-                     << configuration->getName() << dataPacket.provider_name().c_str();
+                     << configuration->getName() << "!=" << dataPacket.provider_name().c_str();
             return;
         }
     }
+
+    qDebug() << QString(dataPacket.DebugString().c_str());
 
     for(int i=0; i<dataPacket.data_provided_size(); i++) {
         Broker::Data dataObject = dataPacket.data_provided().Get(i);
@@ -104,6 +106,6 @@ void Module::processDataPublishedReceived()
             currentData[dataId] = fromProtoDataTypeToVariant(&dataObject);
         }
     }
-
+    qDebug() << "VarianMap" << currentData;
+    qDebug() << "==========================================================";
 }
-
