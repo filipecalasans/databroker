@@ -72,6 +72,7 @@ bool Communication::initControlConnection()
     connect(controlConnection, &AbstractControlConnection::receivedControlCommand, [this](){
         Broker::ControlCommand packet;
         controlConnection->receiveControlCommand(&packet);
+
         qDebug() << "[RCVD CONTROL] Size:" << packet.ByteSize();
         qDebug() << "[RCVD CONTROL]" << QString::fromStdString(packet.DebugString());
         qDebug() << "============================================================================";
@@ -92,6 +93,8 @@ void Communication::timerEvent(QTimerEvent *event)
 {
     event->accept();
 
+    static int count = 0;
+
     if(controlConnection->getState() == TcpControlConnection::STATE_RUNNING) {
         Broker::DataCollection data;
 
@@ -107,5 +110,19 @@ void Communication::timerEvent(QTimerEvent *event)
         if(dataConnection->getIsReady()) {
             dataConnection->provideDataPublished(&data);
         }
+
+        if(((count++) % 2) == 0) {
+            Broker::ControlCommand command;
+            command.set_reply_required(false);
+            command.set_command("ERROR");
+            Broker::ControlCommandArguments *arg = command.add_args();
+            arg->set_data_type(Broker::CTRL_STRING);
+            arg->set_data_string(QString("CAN'T FIND ROBOTS").toStdString());
+            (*command.add_desitination()) = "radio";
+            (*command.add_desitination()) = "ai";
+            (*command.add_desitination()) = "manager";
+            controlConnection->sendControlCommand(&command);
+        }
     }
+
 }

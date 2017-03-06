@@ -241,10 +241,10 @@ void TcpControlConnection::readData()
                 if(isDefaultControlCommand(&cmd)) {
                     runStateTransition(&cmd);
                 }
-            }
-            else {
-                bufferReady = true;
-                emit receivedControlCommand();
+                else {
+                    bufferReady = true;
+                    emit receivedControlCommand();
+                }
             }
         }
     }

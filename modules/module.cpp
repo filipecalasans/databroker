@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDateTime>
 
+
 Module::Module(const QString& configPath, QObject *parent) : QObject(parent)
 {
     configuration = new ModuleConfiguration();
@@ -14,6 +15,9 @@ Module::Module(const QString& configPath, QObject *parent) : QObject(parent)
 
     connect(communication, &Communication::receivedDataPublished,
             this, &Module::processDataPublishedReceived);
+
+    connect(communication, &Communication::receivedCommand,
+            this, &Module::processCommandReceived);
 }
 
 Module::~Module()
@@ -66,6 +70,13 @@ void Module::fromVariantToProtoDataType(const QVariant &dataVariant, Broker::Dat
     return;
 }
 
+void Module::sendControlCommand(Broker::ControlCommand *command)
+{
+    if(communication) {
+        communication->getControlConnection()->sendControlCommand(command);
+    }
+}
+
 void Module::initLiveDataMapFromConfiguration()
 {
     if(configuration) {
@@ -87,7 +98,7 @@ void Module::processDataPublishedReceived()
      * out of order messages when using
      * UdpDataConnection
      */
-    if(lastTimeStamp > dataPacket.timestamp()) { qDebug() << "[lastTimeStamp > data.timestamp()]"; return; }
+    if(lastTimeStamp > dataPacket.timestamp()) { qDebug() << __FILE__ << __LINE__ << "[lastTimeStamp > data.timestamp()]"; return; }
 
     if(configuration) {
         if(dataPacket.provider_name() != configuration->getId().toStdString()) {
@@ -96,8 +107,6 @@ void Module::processDataPublishedReceived()
             return;
         }
     }
-
-    qDebug() << QString(dataPacket.DebugString().c_str());
 
     for(int i=0; i<dataPacket.data_provided_size(); i++) {
         Broker::Data dataObject = dataPacket.data_provided().Get(i);

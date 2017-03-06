@@ -34,6 +34,7 @@ void DataBroker::loadModules()
         QString modulePath = settings.value(moduleId).toString();
         Module *m = new Module(modulePath);
         modules.insert(m->getConfiguration()->getId(), m);
+        connect(m, &Module::processCommandReceived, this, &DataBroker::routeCommandReceived);
         qDebug() << moduleId << "=" << modulePath;
     }
 }
@@ -52,5 +53,31 @@ QList<Module *> DataBroker::getModules()
     return modules.values();
 }
 
+void DataBroker::routeCommand(Broker::ControlCommand *command)
+{
+    Q_UNUSED(command)
+    for(int i=0; i<command->desitination_size(); i++) {
+        QString destination = QString(command->desitination(i).c_str());
+        qDebug() << "[ROUTING CMD] Dest:" << destination;
+        qDebug() << "[ROUTING CMD] Cmd:" << QString(command->DebugString().c_str());
+        qDebug() << "===============================================================";
+        if(modules.contains(destination)) {
+            Module *module = modules.value(destination);
+            module->sendControlCommand(command);
+        }
+    }
+}
 
+void DataBroker::routeCommandReceived()
+{
+    Module *module = qobject_cast<Module*>(sender());
 
+    qDebug() << "[DataBroker::routeCommandReceived()]";
+
+    if(module) {
+        Broker::ControlCommand command;
+        module->getCommunication()->getControlConnection()->receiveControlCommand(&command);
+        routeCommand(&command);
+    }
+
+}

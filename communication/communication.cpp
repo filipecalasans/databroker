@@ -81,6 +81,9 @@ void Communication::initControlConnection(const ModuleConfiguration *configurati
     controlConnection = new TcpControlConnection(
                             configuration->getIp(),
                             configuration->getPortControl());
+
+    connect(controlConnection, &TcpControlConnection::receivedControlCommand,
+            this, &Communication::receivedCommand);
 }
 
 AbstractDataConnection *Communication::getDataConnection() const

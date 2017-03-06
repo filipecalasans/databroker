@@ -23,6 +23,9 @@ signals:
 
 public slots:
 
+    void routeCommand(Broker::ControlCommand *command);
+    void routeCommandReceived();
+
 private:
 
     int dataRate = 0;

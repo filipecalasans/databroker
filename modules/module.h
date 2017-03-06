@@ -23,11 +23,15 @@ public:
     static QVariant fromProtoDataTypeToVariant(Broker::Data *data);
     static void fromVariantToProtoDataType(const QVariant &dataVariant, Broker::Data *data);
 
+    void sendControlCommand(Broker::ControlCommand *command);
+
 protected:
 
     void initLiveDataMapFromConfiguration();
 
 signals:    
+
+    void processCommandReceived();
 
 public slots:
 

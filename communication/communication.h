@@ -28,6 +28,7 @@ public:
 signals:
 
     void receivedDataPublished();
+    void receivedCommand();
 
 public slots:  
 

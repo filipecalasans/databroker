@@ -101,11 +101,11 @@ bool TcpControlConnection::sendControlCommand(Broker::ControlCommand *cmd)
         cmd->SerializeToArray(static_buffer_out+integerSize, MAX_BUFFER_SIZE);
         int writtenBytes = socket->write(static_buffer_out, writeLen);
         if(writeLen == (quint64)writtenBytes) {
-            qDebug() << "[TcpControlConnection::provideDataPublished] len =" << writtenBytes-integerSize;
+            qDebug() << "[TcpControlConnection::sendControlCommand] len =" << writtenBytes-integerSize;
             return true;
         }
 
-        qDebug() << "[TcpControlConnection::provideDataPublished] Error len != len_sent";
+        qDebug() << "[TcpControlConnection::sendControlCommand] Error len != len_sent";
         return false;
     }
 
@@ -279,10 +279,10 @@ void TcpControlConnection::readData()
                 if(isDefaultControlCommand(&cmd)) {
                     runStateTransition(&cmd);
                 }
-            }
-            else {
-                bufferReady = true;
-                emit receivedControlCommand();
+                else {
+                    bufferReady = true;
+                    emit receivedControlCommand();
+                }
             }
         }
     }
