@@ -57,6 +57,22 @@ void DataBroker::routeCommand(Broker::ControlCommand *command)
 {
     Q_UNUSED(command)
 
+    if(command->desitination_size()) {
+        routeCommandUsingPacketContent(command);
+    }
+    else {
+        routeCommandUsingMap(command);
+    }
+}
+
+void DataBroker::routeCommandUsingMap(Broker::ControlCommand *command)
+{
+
+}
+
+void DataBroker::routeCommandUsingPacketContent(
+        Broker::ControlCommand *command)
+{
     if(command->desitination_size() == 1) {
         QString destination = QString(command->desitination(0).c_str());
         if(destination == "all"){

@@ -26,6 +26,11 @@ public slots:
     void routeCommand(Broker::ControlCommand *command);
     void routeCommandReceived();
 
+protected:
+
+    void routeCommandUsingPacketContent(Broker::ControlCommand *command);
+    void routeCommandUsingMap(Broker::ControlCommand *command);
+
 private:
 
     int dataRate = 0;
