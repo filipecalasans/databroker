@@ -8,6 +8,14 @@ Applications such as distributed simulation, simulators, multi-agent systems and
 
 # How does it work ?
 
+## Modules
+
+# Configuration 
+
+## Modules Configuration
+
+## Broker Configuration
+
 
 # Dependencies
  - [Qt >= 5.4](https://www.qt.io/)
