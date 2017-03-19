@@ -77,16 +77,16 @@ Following you can see the desciption of each parameter.
 
 
 | Parameter              | Description           | Data Type  | Optional |
-| ------------------     |:---------------------:| ----------:| -------: | 
+| ---------------------- |:---------------------:| ---------- | -------: | 
 |   **id**               |  Module Identification name. It must be unique. | *String*  - Unique | **No** |
-|   **name**             |  Module name in human readable format. |  *String*| **yes**
-|   **description**      |  Module description in human readble format.|  *String* | **yes**
-|   **port_data**        |  Socket port for the Data Channel|  *Unsigned Integer 16-bits* | **No**
-|   **port_control**     |  Socket port number for the Control Channel | * Unsigned Integer 16-bits*  | **No**
-|   **socket_type**      |  Socket type for the Data Channel. Two values possible *"tcp"* or *"udp"* | *String* - "tcp" or "udp" | **yes**: Default is "tcp"
-|   **data_published**   |  List of data descriptor objects. Data descrptors describes each data provided by the module.| JSON object list. |
-|   **data_consumed**    |  List of data consumed by the module.| JSON object list |
-|   **commands_consumed**|  List of commands consumed by the module| JSON Object list |
+|   **name**             |  Module name in human readable format. |  *String*| **yes** |
+|   **description**      |  Module description in human readble format.|  *String* | **yes** |
+|   **port_data**        |  Socket port for the Data Channel|  *Unsigned Integer 16-bits* | **No** |
+|   **port_control**     |  Socket port number for the Control Channel | *Unsigned Integer 16-bits*  | **No** | 
+|   **socket_type**      |  Socket type for the Data Channel. Two values possible *"tcp"* or *"udp"* | **String** - "tcp" or "udp" | **yes**: Default is "udp" | 
+|   **data_published**   |  List of data descriptor objects. Data descrptors describes each data provided by the module.| JSON object list. | **yes** |
+|   **data_consumed**    |  List of data consumed by the module.| *JSON object list* | **yes** |
+|   **commands_consumed**|  List of commands consumed by the module| *JSON Object list* | **yes**|
 
 ## Broker Configuration
 
