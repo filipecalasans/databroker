@@ -14,7 +14,7 @@ ModuleConfiguration::ModuleConfiguration(QObject *parent) : QObject(parent)
 
 }
 
-QString ModuleConfiguration::getName() const
+QString ModuleConfiguration::getName()() const
 {
     return name;
 }

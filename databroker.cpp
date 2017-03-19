@@ -109,7 +109,7 @@ void DataBroker::forwardCommandToAllModule(
 {
     for(Module *module : modules) {
         if(!module->sendControlCommand(command)) {
-            qDebug() << "[CANT ROUT COMMAND]" << module->getConfiguration()->getName();
+            qDebug() << "[CANT ROUT COMMAND]" << module->getConfiguration()->getId();
         }
     }
 }
@@ -126,7 +126,7 @@ void DataBroker::forwardCommandToDestinationsInPacket(
         if(modules.contains(destination)) {
             Module *module = modules.value(destination);
             if(!module->sendControlCommand(command)) {
-                 qDebug() << "[CANT ROUT COMMAND]" << module->getConfiguration()->getName();
+                 qDebug() << "[CANT ROUT COMMAND]" << module->getConfiguration()->getId();
             }
         }
     }
@@ -139,9 +139,9 @@ void DataBroker::forwardCommandUsingRouteMap(Module *sourceModule,
 
     for(Module *destination : modules.values()) {
         if(destination != sourceModule) {
-            QString moduleName = sourceModule->getConfiguration()->getName();
+            QString moduleId = sourceModule->getConfiguration()->getId();
             const ModuleConfiguration *configuration = destination->getConfiguration();
-            const QStringList *consumed = configuration->getCommandsConsumedByModule(moduleName);
+            const QStringList *consumed = configuration->getCommandsConsumedByModule(moduleId);
             if(consumed) {
                 if(consumed->contains(commandName)) {
                     destination->sendControlCommand(command);
@@ -184,7 +184,7 @@ void DataBroker::buildDataPacketAndSend(Module *module)
             appendDataList(module, dataList, &dataPacket);
         }
     }
-    dataPacket.set_provider_name(module->getConfiguration()->getName().toStdString());
+    dataPacket.set_provider_name(module->getConfiguration()->getId().toStdString());
     dataPacket.set_timestamp(QDateTime::currentMSecsSinceEpoch());
     module->sendDataPacket(&dataPacket);
 }
