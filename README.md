@@ -77,7 +77,7 @@ Following you can see the desciption of each parameter.
 
 
 | Parameter              | Description           | Data Type  | Optional |
-| ---------------------- |:---------------------:| ----------: | -------: | 
+| ---------------------- |:---------------------:| :--------: | -------: | 
 |   **id**               |  Module Identification name. It must be unique. | *String*  - Unique | **No** |
 |   **name**             |  Module name in human readable format. |  *String*| **yes** |
 |   **description**      |  Module description in human readble format.|  *String* | **yes** |
