@@ -4,10 +4,14 @@
 #include <QSettings>
 #include <QDebug>
 #include <QDateTime>
+#include <QJsonValueRef>
+
+#include <QJsonDocument>
+#include <QJsonObject>
 
 DataBroker::DataBroker(QObject *parent) : QObject(parent)
 {
-    QString workingDirectoryPath = "/home/filipe/Documents/Workspace/portfolio/simulation_framework/broker/config";
+    QString workingDirectoryPath = "config";
 
     QDir workingDir(workingDirectoryPath);
     if(!QDir::setCurrent(workingDirectoryPath)) {
@@ -27,28 +31,42 @@ DataBroker::~DataBroker()
     modules.clear();
 }
 
-void DataBroker::loadModules()
+void DataBroker::loadModules(const QJsonArray& moduleArray)
 {
-    QSettings settings("config.ini", QSettings::IniFormat);
-
-    settings.beginGroup("modules");
-
-    for(auto moduleId : settings.allKeys()) {
-        QString modulePath = settings.value(moduleId).toString();
-        Module *m = new Module(modulePath);
-        modules.insert(m->getConfiguration()->getId(), m);
-        connect(m, &Module::processCommandReceived, this, &DataBroker::routeCommandReceived);
-        qDebug() << moduleId << "=" << modulePath;
+    for(QJsonValueRef ref : moduleArray) {
+        if(ref.isString()) {
+            QString modulePath = ref.toString();
+            Module *m = new Module(modulePath);
+            modules.insert(m->getConfiguration()->getId(), m);
+            connect(m, &Module::processCommandReceived, this, &DataBroker::routeCommandReceived);
+        }
     }
 }
 
 void DataBroker::loadConfiguration()
 {
-    QSettings settings("config.ini", QSettings::IniFormat);
 
-    settings.beginGroup("configuration");
+    QJsonParseError error;
 
-    dataRate = settings.value("data_rate", 0).toInt();
+    QFile file(jsonPath);
+    if(!file.open(QFile::ReadOnly)) {
+        qDebug() << file.errorString();
+        return false;
+    }
+
+    QJsonDocument configuration = QJsonDocument::fromJson(file.readAll(), &error);
+
+    if(!configuration.isObject()) {
+        qDebug() << error.errorString();
+        return false;
+    }
+
+    QJsonObject consfigurationObj = configuration.object();
+
+    dataRate = consfigurationObj.value("data_rate").toInt(0);
+
+    QJsonArray modulesJsonArray = consfigurationObj.value("modules").toArray();
+    loadModules(modulesJsonArray);
 }
 
 QList<Module *> DataBroker::getModules()

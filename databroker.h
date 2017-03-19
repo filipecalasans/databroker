@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QJsonArray>
 
 #include "modules/module.h"
 
@@ -14,7 +15,7 @@ public:
 
     ~DataBroker();
 
-    void loadModules();
+    void loadModules(const QJsonArray& moduleArray);
     void loadConfiguration();
 
     QList<Module*> getModules();    
