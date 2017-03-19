@@ -72,7 +72,15 @@ module configuration or to delivery low rate data.
 
 ## Broker Configuration
 
-
+   ```
+{
+   "data_rate": 0,
+   "modules": [
+      "vision.json",
+      "radio.json"
+   ]
+}
+   ```
 
 
 # Dependencies

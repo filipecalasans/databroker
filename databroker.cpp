@@ -45,7 +45,6 @@ void DataBroker::loadModules(const QJsonArray& moduleArray)
 
 void DataBroker::loadConfiguration()
 {
-
     QJsonParseError error;
 
     QFile file(jsonPath);
