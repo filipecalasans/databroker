@@ -132,10 +132,11 @@ to the config.json file.
 
 | Parameter              | Description           | Data Type  | Optional |
 | ---------------------- |:---------------------:| :--------: | :-------: |
-|**data_rate**| Minimum time between data packets in milliseconds (ms) |*Unsigned Integer* |**Yes** - default is 0|
-|**modules**| Path to the modules descriptors. Paths are relative to the broker configuration directory. |*String*|**No**|
+|**data_rate**| Minimum time between data packets in milliseconds (ms) |*Unsigned Integer* | **Yes** - default is 0|
+|**modules**| Path to the module descriptors. Paths are relative to the broker configuration directory. | *String* | **No** |
 
 ## Communication API
+
 
 # Dependencies
  - [Qt >= 5.4](https://www.qt.io/)
