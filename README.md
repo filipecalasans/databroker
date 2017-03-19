@@ -96,7 +96,7 @@ Following you can see the desciption of each parameter.
 |**description**| Data description in human readble format.|*String*|**Yes**|
 |**unit**| Data Unit. It may be a pysical unit, such as m, m/s, degrees or something that represent the unit. |*String*|**Yes**|
 
-### Data data_consumed
+### Data Consumed
 
 | Parameter              | Description           | Data Type  | Optional |
 | ---------------------- |:---------------------:| :--------: | :-------: |
@@ -108,7 +108,11 @@ Following you can see the desciption of each parameter.
 | Parameter              | Description           | Data Type  | Optional |
 | ---------------------- |:---------------------:| :--------: | :-------: |
 |**source**| Module Id of the command provider|*String*|**No**|
-|**command**| Command string|*String*|**No**|
+|**command**| Command string |*String*|**No**|
+
+When no command consumed is provided, the module that is sending the command must specify 
+the destination in the command packet. The explicit definition in-packet of the destinations has 
+precedence over the pre-defined route table. More information can be found in the section *Communication API*.
 
 ## Broker Configuration
 
@@ -125,6 +129,13 @@ to the config.json file.
       ]
 }
    ```
+
+| Parameter              | Description           | Data Type  | Optional |
+| ---------------------- |:---------------------:| :--------: | :-------: |
+|**data_rate**| Minimum time between data packets in milliseconds (ms) |*Unsigned Integer* |**Yes** - default is 0|
+|**modules**| Path to the modules descriptors. Paths are relative to the broker configuration directory. |*String*|**No**|
+
+## Communication API
 
 # Dependencies
  - [Qt >= 5.4](https://www.qt.io/)
