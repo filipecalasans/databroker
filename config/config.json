@@ -1,0 +1,7 @@
+{
+   "data_rate": 0,
+   "modules": [
+      "vision.json",
+      "radio.json"
+   ]
+}
