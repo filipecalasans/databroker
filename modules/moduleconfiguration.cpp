@@ -133,11 +133,10 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
                 data_published.insert(dataId, descriptor);
             }
         }
-        //qDebug() << data_published;
     }
 
     QJsonArray dataConsumed = moduleObj.value("data_consumed").toArray();
-    if(dataConsumed.size()) {
+    if(dataConsumed.size() > 0) {
         for(QJsonValueRef ref : dataConsumed) {
             locallyProvided =true;
             if(ref.isObject()) {
@@ -147,7 +146,26 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
                 if(!data_consumed.contains(source)) {
                     data_consumed.insert(source, new QStringList());
                 }
-                ((QStringList*)data_consumed.value(source))->append(dataid);
+                if(!((QStringList*)data_consumed.value(source))->contains(dataid)) {
+                    ((QStringList*)data_consumed.value(source))->append(dataid);
+                }
+            }
+        }
+    }
+
+    QJsonArray commandConsummed = moduleObj.value("commands_consumed").toArray();
+    if(commandConsummed.size() > 0) {
+        for(QJsonValueRef ref : dataConsumed) {
+            if(ref.isObject()) {
+                QJsonObject routeObj = ref.toObject();
+                QString source = routeObj.value("source").toString();
+                QString commandName = routeObj.value("command").toString();
+                if(!commands_consumed.contains(source)) {
+                    commands_consumed.insert(source, new QStringList());
+                }
+                if(!((QStringList*)commands_consumed.value(source))->contains(commandName)) {
+                    ((QStringList*)commands_consumed.value(source))->append(commandName);
+                }
             }
         }
     }
@@ -163,6 +181,21 @@ const QMap<QString, DataDescriptor> *ModuleConfiguration::getDataPublishedMap() 
 const QMap<QString, QStringList *> *ModuleConfiguration::getDataConsumedRoutes() const
 {
     return &data_consumed;
+}
+
+const QMap<QString, QStringList *> *ModuleConfiguration::getCommandsConsumedRoutes() const
+{
+    return &commands_consumed;
+}
+
+const QStringList *ModuleConfiguration::getCommandsConsumedByModule(const QString &moduleId) const
+{
+    return commands_consumed.value(moduleId, nullptr);
+}
+
+const QStringList *ModuleConfiguration::getDataConsumedByModule(const QString &moduleId) const
+{
+    return data_consumed.value(moduleId, nullptr);
 }
 
 QString ModuleConfiguration::getId() const

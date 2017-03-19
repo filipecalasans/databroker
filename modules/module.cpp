@@ -116,6 +116,7 @@ void Module::processDataPublishedReceived()
             currentData[dataId] = fromProtoDataTypeToVariant(&dataObject);
         }
     }
+
     qDebug() << "VarianMap" << currentData;
     qDebug() << "==========================================================";
 }

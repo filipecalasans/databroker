@@ -53,7 +53,7 @@ QList<Module *> DataBroker::getModules()
     return modules.values();
 }
 
-void DataBroker::routeCommand(Broker::ControlCommand *command)
+void DataBroker::routeCommand(Module *sourceModule, Broker::ControlCommand *command)
 {
     Q_UNUSED(command)
 
@@ -61,13 +61,13 @@ void DataBroker::routeCommand(Broker::ControlCommand *command)
         routeCommandUsingPacketContent(command);
     }
     else {
-        routeCommandUsingMap(command);
+        routeCommandUsingMap(sourceModule, command);
     }
 }
 
-void DataBroker::routeCommandUsingMap(Broker::ControlCommand *command)
+void DataBroker::routeCommandUsingMap(Module *sourceModule, Broker::ControlCommand *command)
 {
-
+    forwardCommandUsingRouteMap(sourceModule, command);
 }
 
 void DataBroker::routeCommandUsingPacketContent(
@@ -76,13 +76,28 @@ void DataBroker::routeCommandUsingPacketContent(
     if(command->desitination_size() == 1) {
         QString destination = QString(command->desitination(0).c_str());
         if(destination == "all"){
-            for(Module *module : modules) {
-                module->sendControlCommand(command);
-            }
+            forwardCommandToAllModule(command);
             return;
         }
     }
 
+    forwardCommandToDestinationsInPacket(command);
+}
+
+void DataBroker::forwardCommandToAllModule(
+        Broker::ControlCommand *command)
+{
+    for(Module *module : modules) {
+        if(!module->sendControlCommand(command)) {
+            qDebug() << "[CANT ROUT COMMAND]" << module->getConfiguration()->getName();
+        }
+    }
+}
+
+void DataBroker::forwardCommandToDestinationsInPacket(
+        Broker::ControlCommand *command)
+{
+    /* Routing command using to the destinations listed in the packet */
     for(int i=0; i<command->desitination_size(); i++) {
         QString destination = QString(command->desitination(i).c_str());
         qDebug() << "[ROUTING CMD] Dest:" << destination;
@@ -91,7 +106,26 @@ void DataBroker::routeCommandUsingPacketContent(
         if(modules.contains(destination)) {
             Module *module = modules.value(destination);
             if(!module->sendControlCommand(command)) {
-                qDebug() << "[CANT ROUT COMMAND]";
+                 qDebug() << "[CANT ROUT COMMAND]" << module->getConfiguration()->getName();
+            }
+        }
+    }
+}
+
+void DataBroker::forwardCommandUsingRouteMap(Module *sourceModule,
+        Broker::ControlCommand *command)
+{
+    QString commandName = QString(command->command().c_str());
+
+    for(Module *destination : modules.values()) {
+        if(destination != sourceModule) {
+            QString moduleName = sourceModule->getConfiguration()->getName();
+            const ModuleConfiguration *configuration = destination->getConfiguration();
+            const QStringList *consumed = configuration->getCommandsConsumedByModule(moduleName);
+            if(consumed) {
+                if(consumed->contains(commandName)) {
+                    destination->sendControlCommand(command);
+                }
             }
         }
     }
@@ -106,7 +140,6 @@ void DataBroker::routeCommandReceived()
     if(module) {
         Broker::ControlCommand command;
         module->getCommunication()->getControlConnection()->receiveControlCommand(&command);
-        routeCommand(&command);
+        routeCommand(module, &command);
     }
-
 }

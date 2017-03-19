@@ -23,13 +23,16 @@ signals:
 
 public slots:
 
-    void routeCommand(Broker::ControlCommand *command);
+    void routeCommand(Module *sourceModule, Broker::ControlCommand *command);
     void routeCommandReceived();
 
 protected:
 
     void routeCommandUsingPacketContent(Broker::ControlCommand *command);
-    void routeCommandUsingMap(Broker::ControlCommand *command);
+    void routeCommandUsingMap(Module *sourceModule, Broker::ControlCommand *command);
+    void forwardCommandToAllModule(Broker::ControlCommand *command);
+    void forwardCommandToDestinationsInPacket(Broker::ControlCommand *command);
+    void forwardCommandUsingRouteMap(Module *sourceModule, Broker::ControlCommand *command);
 
 private:
 

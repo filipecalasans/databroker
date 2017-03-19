@@ -85,6 +85,10 @@ public:
 
     const QMap<QString, DataDescriptor> *getDataPublishedMap() const;
     const QMap<QString, QStringList *> *getDataConsumedRoutes() const;
+    const QMap<QString, QStringList *> *getCommandsConsumedRoutes() const;
+
+    const QStringList *getCommandsConsumedByModule(const QString &moduleId) const;
+    const QStringList *getDataConsumedByModule(const QString &moduleId) const;
 
 private:
 
@@ -98,9 +102,14 @@ private:
     QMap<QString, DataDescriptor> data_published;
 
     /*
-     * Source Module, List of data ids.
+     * <Source Module, List of data ids>
      */
     QMap<QString, QStringList*> data_consumed;
+
+    /*
+     * <Source Module, List of Commands>
+     */
+    QMap<QString, QStringList*> commands_consumed;
 
     bool mandatory = true;
     bool locallyProvided = true;
