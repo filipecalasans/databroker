@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QSettings>
 #include <QDebug>
+#include <QDateTime>
 
 DataBroker::DataBroker(QObject *parent) : QObject(parent)
 {
@@ -16,6 +17,8 @@ DataBroker::DataBroker(QObject *parent) : QObject(parent)
 
     loadConfiguration();
     loadModules();
+
+    startTimer(dataRate);
 }
 
 DataBroker::~DataBroker()
@@ -141,5 +144,43 @@ void DataBroker::routeCommandReceived()
         Broker::ControlCommand command;
         module->getCommunication()->getControlConnection()->receiveControlCommand(&command);
         routeCommand(module, &command);
+    }
+}
+
+void DataBroker::timerEvent(QTimerEvent *event)
+{
+    Q_UNUSED(event)
+    for(Module *module : modules) {
+        buildDataPacketAndSend(module);
+    }
+}
+
+void DataBroker::buildDataPacketAndSend(Module *module)
+{
+    const QMap<QString, QStringList *> *map = module->getConfiguration()->getDataConsumedRoutes();
+    Broker::DataCollection dataPacket;
+
+    for(QString fromModule : map->keys()) {
+        QStringList *dataList = map->value(fromModule);
+        Module *module = modules.value(fromModule, nullptr);
+        if(dataList->size() && module) {
+            appendDataList(module, dataList, &dataPacket);
+        }
+    }
+    dataPacket.set_provider_name(module->getConfiguration()->getName().toStdString());
+    dataPacket.set_timestamp(QDateTime::currentMSecsSinceEpoch());
+    module->sendDataPacket(&dataPacket);
+}
+
+void DataBroker::appendDataList(Module *fromModule, QStringList *dataList,
+                                Broker::DataCollection *packet)
+{
+    for(QString dataId : *dataList) {
+        QVariant dataVariant = fromModule->getData(dataId);
+        if(dataVariant.isValid()) {
+            Broker::Data *data = packet->add_data_provided();
+            data->set_data_id(dataId.toStdString());
+            Module::fromVariantToProtoDataType(dataVariant, data);
+        }
     }
 }

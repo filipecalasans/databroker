@@ -33,6 +33,11 @@ const ModuleConfiguration *Module::getConfiguration()
     return configuration;
 }
 
+const QVariant &Module::getData(const QString &dataId) const
+{
+    return currentData.value(dataId);
+}
+
 Communication *Module::getCommunication() const
 {
     return communication;
@@ -78,6 +83,14 @@ bool Module::sendControlCommand(Broker::ControlCommand *command)
     return false;
 }
 
+bool Module::sendDataPacket(Broker::DataCollection *dataCollection)
+{
+    if(communication) {
+        return communication->getDataConnection()->provideDataConsumed(dataCollection);
+    }
+    return false;
+}
+
 void Module::initLiveDataMapFromConfiguration()
 {
     if(configuration) {
@@ -90,8 +103,6 @@ void Module::initLiveDataMapFromConfiguration()
 
 void Module::processDataPublishedReceived()
 {
-    //Q_ASSERT(configuration);
-
     Broker::DataCollection dataPacket;
     communication->getDataConnection()->receiveDataPublished(&dataPacket);
 
@@ -99,7 +110,10 @@ void Module::processDataPublishedReceived()
      * out of order messages when using
      * UdpDataConnection
      */
-    if(lastTimeStamp > dataPacket.timestamp()) { qDebug() << __FILE__ << __LINE__ << "[lastTimeStamp > data.timestamp()]"; return; }
+    if(lastTimeStamp > dataPacket.timestamp()) {
+        qDebug() << __FILE__ << __LINE__ << "[lastTimeStamp > data.timestamp()]";
+        return;
+    }
 
     if(configuration) {
         if(dataPacket.provider_name() != configuration->getId().toStdString()) {

@@ -17,7 +17,8 @@ public:
     void loadModules();
     void loadConfiguration();
 
-    QList<Module*> getModules();
+    QList<Module*> getModules();    
+    void timerEvent(QTimerEvent *event);
 
 signals:
 
@@ -33,6 +34,9 @@ protected:
     void forwardCommandToAllModule(Broker::ControlCommand *command);
     void forwardCommandToDestinationsInPacket(Broker::ControlCommand *command);
     void forwardCommandUsingRouteMap(Module *sourceModule, Broker::ControlCommand *command);
+
+    void buildDataPacketAndSend(Module *module);
+    void appendDataList(Module *fromModule, QStringList *dataList, Broker::DataCollection *packet);
 
 private:
 

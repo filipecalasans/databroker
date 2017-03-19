@@ -17,6 +17,7 @@ public:
     ~Module();
 
     const ModuleConfiguration *getConfiguration();
+    const QVariant &getData(const QString& dataId) const;
 
     Communication *getCommunication() const;
 
@@ -24,6 +25,8 @@ public:
     static void fromVariantToProtoDataType(const QVariant &dataVariant, Broker::Data *data);
 
     bool sendControlCommand(Broker::ControlCommand *command);
+    bool sendDataPacket(Broker::DataCollection *dataCollection);
+
 
 protected:
 
