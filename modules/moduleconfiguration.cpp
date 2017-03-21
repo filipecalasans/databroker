@@ -157,7 +157,7 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
 
     QJsonArray commandConsummed = moduleObj.value("commands_consumed").toArray();
     if(commandConsummed.size() > 0) {
-        for(QJsonValue ref : dataConsumed) {
+        for(QJsonValue ref : commandConsummed) {
             if(ref.isObject()) {
                 QJsonObject routeObj = ref.toObject();
                 QString source = routeObj.value("source").toString();

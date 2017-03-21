@@ -152,7 +152,7 @@ void Communication::timerEvent(QTimerEvent *event)
             arg->set_data_string(QString("CAN'T FIND ROBOTS").toStdString());
             //(*command.add_desitination()) = "radio";
             //(*command.add_desitination()) = "ai";
-            (*command.add_desitination()) = "all";
+            //(*command.add_desitination()) = "all";
             controlConnection->sendControlCommand(&command);
         }
 #else
@@ -165,7 +165,7 @@ void Communication::timerEvent(QTimerEvent *event)
             arg->set_data_string(QString("CAN'T FIND ROBOTS").toStdString());
             //(*command.add_desitination()) = "vision";
             //(*command.add_desitination()) = "ai";
-            (*command.add_desitination()) = "all";
+            //(*command.add_desitination()) = "all";
             controlConnection->sendControlCommand(&command);
         }
 #endif

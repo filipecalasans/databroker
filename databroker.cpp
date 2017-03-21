@@ -93,6 +93,7 @@ void DataBroker::routeCommand(Module *sourceModule, Broker::ControlCommand *comm
 
 void DataBroker::routeCommandUsingMap(Module *sourceModule, Broker::ControlCommand *command)
 {
+    qDebug() << "[ROUTING CMD USING MAP]";
     forwardCommandUsingRouteMap(sourceModule, command);
 }
 
