@@ -41,7 +41,10 @@ protected:
 
 private:
 
+    bool autoStart = true;
     int dataRate = 0;
+
+    QStringList masterModules;
     QMap <QString, Module*> modules;
     QString workingDirectoryPath;
 

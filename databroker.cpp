@@ -12,17 +12,21 @@
 
 DataBroker::DataBroker(QObject *parent) : QObject(parent)
 {
+    /* TODO: Change this */
+
     //QString workingDirectoryPath = QDir::current().absolutePath() + "/config";
+
+
+    if(!loadConfiguration()) {
+        exit(1);
+        return;
+    }
+
     workingDirectoryPath = "/home/filipe/Documents/Workspace/portfolio/simulation_framework/build/config";
 
     QDir workingDir(workingDirectoryPath);
     if(!QDir::setCurrent(workingDirectoryPath)) {
         qDebug() << workingDir << "does not exist.";
-        return;
-    }
-
-    if(!loadConfiguration()) {
-        exit(1);
         return;
     }
 
@@ -64,11 +68,22 @@ bool DataBroker::loadConfiguration()
         return false;
     }
 
-    QJsonObject consfigurationObj = configuration.object();
+    QJsonObject configurationObj = configuration.object();
 
-    dataRate = consfigurationObj.value("data_rate").toInt(0);
+    dataRate = configurationObj.value("data_rate").toInt(0);
+    autoStart = configurationObj.value("autoStart").toBool(true);
 
-    QJsonArray modulesJsonArray = consfigurationObj.value("modules").toArray();
+    QJsonArray masterModules = configurationObj.value("master_modules").toArray();
+    for(QJsonValue master : masterModules) {
+        if(master.isString()) {
+            QString masterId = master.toString();
+            if(!masterId.isEmpty()) {
+                masterModules << master.toString();
+            }
+        }
+    }
+
+    QJsonArray modulesJsonArray = configurationObj.value("modules").toArray();
     loadModules(modulesJsonArray);
 
     return true;

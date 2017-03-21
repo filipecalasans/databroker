@@ -6,7 +6,7 @@
 #include <QDateTime>
 #include <QTimerEvent>
 
-//#define VISION
+#define VISION
 
 #ifdef VISION
 #define PROVIDER_NAME "vision"
