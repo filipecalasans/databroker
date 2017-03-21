@@ -1,4 +1,3 @@
-   ```
 {
    "id": "radio",
    "name":"Radio Communication",
@@ -42,7 +41,7 @@
 
    "commands_consumed": [ 
       {
-         "source": "ai",
+         "source": "vision",
          "command": "kick"
       }
    ]	

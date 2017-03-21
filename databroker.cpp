@@ -5,13 +5,15 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QJsonValueRef>
+#include <QJsonArray>
 
 #include <QJsonDocument>
 #include <QJsonObject>
 
 DataBroker::DataBroker(QObject *parent) : QObject(parent)
 {
-    QString workingDirectoryPath = "config";
+    //QString workingDirectoryPath = QDir::current().absolutePath() + "/config";
+    workingDirectoryPath = "/home/filipe/Documents/Workspace/portfolio/simulation_framework/build/config";
 
     QDir workingDir(workingDirectoryPath);
     if(!QDir::setCurrent(workingDirectoryPath)) {
@@ -19,8 +21,10 @@ DataBroker::DataBroker(QObject *parent) : QObject(parent)
         return;
     }
 
-    loadConfiguration();
-    loadModules();
+    if(!loadConfiguration()) {
+        exit(1);
+        return;
+    }
 
     startTimer(dataRate);
 }
@@ -33,9 +37,9 @@ DataBroker::~DataBroker()
 
 void DataBroker::loadModules(const QJsonArray& moduleArray)
 {
-    for(QJsonValueRef ref : moduleArray) {
+    for(QJsonValue ref : moduleArray) {
         if(ref.isString()) {
-            QString modulePath = ref.toString();
+            QString modulePath = workingDirectoryPath + "/" + ref.toString();
             Module *m = new Module(modulePath);
             modules.insert(m->getConfiguration()->getId(), m);
             connect(m, &Module::processCommandReceived, this, &DataBroker::routeCommandReceived);
@@ -43,11 +47,11 @@ void DataBroker::loadModules(const QJsonArray& moduleArray)
     }
 }
 
-void DataBroker::loadConfiguration()
+bool DataBroker::loadConfiguration()
 {
     QJsonParseError error;
 
-    QFile file(jsonPath);
+    QFile file("config.json");
     if(!file.open(QFile::ReadOnly)) {
         qDebug() << file.errorString();
         return false;
@@ -66,6 +70,8 @@ void DataBroker::loadConfiguration()
 
     QJsonArray modulesJsonArray = consfigurationObj.value("modules").toArray();
     loadModules(modulesJsonArray);
+
+    return true;
 }
 
 QList<Module *> DataBroker::getModules()
@@ -78,7 +84,7 @@ void DataBroker::routeCommand(Module *sourceModule, Broker::ControlCommand *comm
     Q_UNUSED(command)
 
     if(command->desitination_size()) {
-        routeCommandUsingPacketContent(command);
+        routeCommandUsingPacketContent(sourceModule, command);
     }
     else {
         routeCommandUsingMap(sourceModule, command);
@@ -91,12 +97,12 @@ void DataBroker::routeCommandUsingMap(Module *sourceModule, Broker::ControlComma
 }
 
 void DataBroker::routeCommandUsingPacketContent(
-        Broker::ControlCommand *command)
+        Module *sourceModule, Broker::ControlCommand *command)
 {
     if(command->desitination_size() == 1) {
         QString destination = QString(command->desitination(0).c_str());
         if(destination == "all"){
-            forwardCommandToAllModule(command);
+            forwardCommandToAllModule(sourceModule, command);
             return;
         }
     }
@@ -105,11 +111,15 @@ void DataBroker::routeCommandUsingPacketContent(
 }
 
 void DataBroker::forwardCommandToAllModule(
-        Broker::ControlCommand *command)
+        Module *sourceModule, Broker::ControlCommand *command)
 {
     for(Module *module : modules) {
-        if(!module->sendControlCommand(command)) {
-            qDebug() << "[CANT ROUT COMMAND]" << module->getConfiguration()->getId();
+        if(sourceModule != module) {
+            qDebug() << "[TRY ROUT COMMAND] dest:" << module->getConfiguration()->getId();
+            if(!module->sendControlCommand(command)) {
+                qDebug() << "[CANT ROUT COMMAND] dest:" << module->getConfiguration()->getId();
+            }
+            qDebug() << "==================================";
         }
     }
 }
@@ -122,13 +132,17 @@ void DataBroker::forwardCommandToDestinationsInPacket(
         QString destination = QString(command->desitination(i).c_str());
         qDebug() << "[ROUTING CMD] Dest:" << destination;
         qDebug() << "[ROUTING CMD] Cmd:" << QString(command->DebugString().c_str());
-        qDebug() << "===============================================================";
         if(modules.contains(destination)) {
             Module *module = modules.value(destination);
             if(!module->sendControlCommand(command)) {
-                 qDebug() << "[CANT ROUT COMMAND]" << module->getConfiguration()->getId();
+                 qDebug() << "[CANT SEND COMMAND] From: " << module->getConfiguration()->getId()
+                          << "To: " << destination;
             }
         }
+        else {
+            qDebug() << "[ROUTING CMD] Can`t find the module:" << destination;
+        }
+        qDebug() << "===============================================================";
     }
 }
 
@@ -168,7 +182,7 @@ void DataBroker::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event)
     for(Module *module : modules) {
-        buildDataPacketAndSend(module);
+        //buildDataPacketAndSend(module);
     }
 }
 
@@ -201,3 +215,5 @@ void DataBroker::appendDataList(Module *fromModule, QStringList *dataList,
         }
     }
 }
+
+

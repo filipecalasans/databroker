@@ -14,7 +14,7 @@ ModuleConfiguration::ModuleConfiguration(QObject *parent) : QObject(parent)
 
 }
 
-QString ModuleConfiguration::getName()() const
+QString ModuleConfiguration::getName() const
 {
     return name;
 }
@@ -110,6 +110,7 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
         qDebug() << error.errorString();
         return false;
     }
+
     QJsonObject moduleObj = module.object();
     id = moduleObj.value("id").toString();
     name = moduleObj.value("name").toString();
@@ -118,10 +119,11 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
     portData = moduleObj.value("port_data").toInt();
     portControl = moduleObj.value("port_control").toInt();
     socketDataType = moduleObj.value("socket_type").toString() == "tcp" ? QAbstractSocket::TcpSocket : QAbstractSocket::UdpSocket;
+    mandatory - moduleObj.value("mandatory").toBool(true);
 
     QJsonArray dataPublished = moduleObj.value("data_published").toArray();
     if(dataPublished.size()) {
-        for(QJsonValueRef ref : dataPublished) {
+        for(QJsonValue ref : dataPublished) {
             locallyProvided =true;
             if(ref.isObject()) {
                 QJsonObject data = ref.toObject();
@@ -137,7 +139,7 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
 
     QJsonArray dataConsumed = moduleObj.value("data_consumed").toArray();
     if(dataConsumed.size() > 0) {
-        for(QJsonValueRef ref : dataConsumed) {
+        for(QJsonValue ref : dataConsumed) {
             locallyProvided =true;
             if(ref.isObject()) {
                 QJsonObject routeObj = ref.toObject();
@@ -155,7 +157,7 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
 
     QJsonArray commandConsummed = moduleObj.value("commands_consumed").toArray();
     if(commandConsummed.size() > 0) {
-        for(QJsonValueRef ref : dataConsumed) {
+        for(QJsonValue ref : dataConsumed) {
             if(ref.isObject()) {
                 QJsonObject routeObj = ref.toObject();
                 QString source = routeObj.value("source").toString();

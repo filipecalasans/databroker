@@ -6,6 +6,18 @@
 #include <QDateTime>
 #include <QTimerEvent>
 
+//#define VISION
+
+#ifdef VISION
+#define PROVIDER_NAME "vision"
+#define DATA_PORT 6001
+#define COMMAND_PORT 6000
+#else
+#define PROVIDER_NAME "radio"
+#define DATA_PORT 6002
+#define COMMAND_PORT 6003
+#endif
+
 Communication::Communication(QObject *parent) : QObject(parent)
 {
     initControlConnection();
@@ -46,7 +58,7 @@ bool Communication::initDataConnection()
         qDebug() << "============================================================================";
     });
 
-    if(!dataConnection->initConnection(6001)) {
+    if(!dataConnection->initConnection(DATA_PORT)) {
         qDebug() << "Can not init connection";
         return false;
     }
@@ -78,7 +90,7 @@ bool Communication::initControlConnection()
         qDebug() << "============================================================================";
     });
 
-    if(!controlConnection->initConnection(6000)) {
+    if(!controlConnection->initConnection(COMMAND_PORT)) {
         qDebug() << "Can not init control connection";
         return false;
     }
@@ -98,7 +110,8 @@ void Communication::timerEvent(QTimerEvent *event)
     if(controlConnection->getState() == TcpControlConnection::STATE_RUNNING) {
         Broker::DataCollection data;
 
-        data.set_provider_name("vision");
+#ifdef VISION
+        data.set_provider_name(PROVIDER_NAME);
         data.set_timestamp(QDateTime::currentDateTime().toMSecsSinceEpoch());
         for(int i=0; i<5; i++) {
             Broker::Data *p = data.add_data_provided();
@@ -110,19 +123,53 @@ void Communication::timerEvent(QTimerEvent *event)
         if(dataConnection->getIsReady()) {
             dataConnection->provideDataPublished(&data);
         }
+#else
 
+        data.set_provider_name(PROVIDER_NAME);
+        data.set_timestamp(QDateTime::currentDateTime().toMSecsSinceEpoch());
+        for(int i=0; i<2; i++) {
+            Broker::Data *p = data.add_data_provided();
+            p->set_data_id(QString("v%1").arg(i).toStdString());
+            p->set_data_type(Broker::DATA_DOUBLE);
+            p->set_data_double(qrand()/1.76);
+        }
+
+        if(dataConnection->getIsReady()) {
+            dataConnection->provideDataPublished(&data);
+        }
+#endif
+
+
+
+
+#ifdef VISION
         if(((count++) % 2) == 0) {
             Broker::ControlCommand command;
             command.set_reply_required(false);
-            command.set_command("ERROR");
+            command.set_command("VISION CMD");
             Broker::ControlCommandArguments *arg = command.add_args();
             arg->set_data_type(Broker::CTRL_STRING);
             arg->set_data_string(QString("CAN'T FIND ROBOTS").toStdString());
-            (*command.add_desitination()) = "radio";
-            (*command.add_desitination()) = "ai";
-            (*command.add_desitination()) = "manager";
+            //(*command.add_desitination()) = "radio";
+            //(*command.add_desitination()) = "ai";
+            (*command.add_desitination()) = "all";
             controlConnection->sendControlCommand(&command);
         }
+#else
+        if(((count++) % 2) == 0) {
+            Broker::ControlCommand command;
+            command.set_reply_required(false);
+            command.set_command("RADIO CMD");
+            Broker::ControlCommandArguments *arg = command.add_args();
+            arg->set_data_type(Broker::CTRL_STRING);
+            arg->set_data_string(QString("CAN'T FIND ROBOTS").toStdString());
+            //(*command.add_desitination()) = "vision";
+            //(*command.add_desitination()) = "ai";
+            (*command.add_desitination()) = "all";
+            controlConnection->sendControlCommand(&command);
+        }
+#endif
+
     }
 
 }

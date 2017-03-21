@@ -1,5 +1,7 @@
 {
    "data_rate": 0,
+   "auto_start": false,
+   "master_modules": [ "vision" ],
    "modules": [
       "vision.json",
       "radio.json"

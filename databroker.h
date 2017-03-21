@@ -16,7 +16,7 @@ public:
     ~DataBroker();
 
     void loadModules(const QJsonArray& moduleArray);
-    void loadConfiguration();
+    bool loadConfiguration();
 
     QList<Module*> getModules();    
     void timerEvent(QTimerEvent *event);
@@ -30,9 +30,9 @@ public slots:
 
 protected:
 
-    void routeCommandUsingPacketContent(Broker::ControlCommand *command);
+    void routeCommandUsingPacketContent(Module *sourceModule, Broker::ControlCommand *command);
     void routeCommandUsingMap(Module *sourceModule, Broker::ControlCommand *command);
-    void forwardCommandToAllModule(Broker::ControlCommand *command);
+    void forwardCommandToAllModule(Module *sourceModule, Broker::ControlCommand *command);
     void forwardCommandToDestinationsInPacket(Broker::ControlCommand *command);
     void forwardCommandUsingRouteMap(Module *sourceModule, Broker::ControlCommand *command);
 
@@ -43,6 +43,7 @@ private:
 
     int dataRate = 0;
     QMap <QString, Module*> modules;
+    QString workingDirectoryPath;
 
 };
 

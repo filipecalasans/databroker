@@ -235,7 +235,6 @@ void TcpControlConnection::readData()
                 emit overrunIdentified();
             }
 
-
             Broker::ControlCommand cmd;
             if(receiveControlCommand(&cmd)) {
                 if(isDefaultControlCommand(&cmd)) {

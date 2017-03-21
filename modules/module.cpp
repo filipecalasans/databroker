@@ -118,7 +118,7 @@ void Module::processDataPublishedReceived()
     if(configuration) {
         if(dataPacket.provider_name() != configuration->getId().toStdString()) {
             qDebug() << __FILE__ << __LINE__ << "data.name() != module.name()"
-                     << configuration->getId()() << "!=" << dataPacket.provider_name().c_str();
+                     << configuration->getId() << "!=" << dataPacket.provider_name().c_str();
             return;
         }
     }

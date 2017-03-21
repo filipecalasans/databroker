@@ -14,7 +14,7 @@ The same principle is used in the Control communication channel, used to forward
 Commands are a special kind of data, which are not produced periodically and may be used to module synchronization, 
 module configuration or to delivery low rate data.
 
-# Configuration 
+# Configuration
 
 ## Modules Configuration
 
@@ -29,6 +29,7 @@ Example of Module configuration file.
    "port_data":6002,
    "port_control":6003,
    "socket_type":"udp",
+   "mandatory": true
 
    "data_published": [ 
       {
@@ -79,6 +80,7 @@ Following you can see the desciption of each parameter.
 | ---------------------- |:---------------------:| :--------: | :-------: | 
 |   **id**               |  Module Identification name. It must be unique. | *String*  - Unique | **No** |
 |   **name**             |  Module name in human readable format. |  *String*| **yes** |
+|   **mandatory**        |  Module must be connected to communication go to the Running state, otherwise it fails to start the communication. | *Boolean* | **Yes** - default value is True |
 |   **description**      |  Module description in human readble format.|  *String* | **Yes** |
 |   **port_data**        |  Socket port for the Data Channel|  *Unsigned Integer 16-bits* | **No** |
 |   **port_control**     |  Socket port number for the Control Channel | *Unsigned Integer 16-bits*  | **No** | 
@@ -123,6 +125,8 @@ to the config.json file.
    ```
 {
    "data_rate": 0,
+   "auto_start": false,
+   "master_module": "vision",
    "modules": [
       "vision.json",
       "radio.json"

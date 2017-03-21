@@ -54,5 +54,13 @@
          "source": "radio",
          "id": "vy0"
       }
-   ]	
+   ],
+
+   "commands_consumed": [ 
+      {
+         "source": "radio",
+         "command": "start_capture"
+      }
+   ]
+	
 }
