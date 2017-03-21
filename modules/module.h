@@ -17,7 +17,7 @@ public:
     ~Module();
 
     const ModuleConfiguration *getConfiguration();
-    const QVariant &getData(const QString& dataId) const;
+    QVariant getData(const QString& dataId) const;
 
     Communication *getCommunication() const;
 

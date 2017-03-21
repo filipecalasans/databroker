@@ -19,49 +19,35 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_resetButton_clicked()
 {
-    for(Module *m : broker->getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultResetCommand();
-    }
+    broker->resetModules();
 }
 
 void MainWindow::on_readyButton_clicked()
 {
-    for(Module *m : broker->getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultReadyCommand();
-    }
+    broker->readyModules();
 }
 
 void MainWindow::on_startButton_clicked()
 {
-    for(Module *m : broker->getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultStartCommand();
-    }
+    broker->startModules();
 }
 
 void MainWindow::on_pauseButton_clicked()
 {
-    for(Module *m : broker->getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultPauseCommand();
-    }
+    broker->pauseModules();
 }
 
 void MainWindow::on_resumeButton_clicked()
 {
-    for(Module *m : broker->getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultResumeCommand();
-    }
+    broker->resumeModules();
 }
 
 void MainWindow::on_disconnectButton_clicked()
 {
-    for(Module *m : broker->getModules()) {
-        m->getCommunication()->getControlConnection()->deInitConnection();
-    }
+    broker->disconnectModules();
 }
 
 void MainWindow::on_connectButton_clicked()
 {
-    for(Module *m : broker->getModules()) {
-        m->getCommunication()->getControlConnection()->initConnection();
-    }
+    broker->connectModules();
 }

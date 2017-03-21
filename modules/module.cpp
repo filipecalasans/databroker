@@ -33,7 +33,7 @@ const ModuleConfiguration *Module::getConfiguration()
     return configuration;
 }
 
-const QVariant &Module::getData(const QString &dataId) const
+QVariant Module::getData(const QString &dataId) const
 {
     return currentData.value(dataId);
 }

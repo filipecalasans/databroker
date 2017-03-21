@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include <QJsonArray>
+#include <QTimer>
 
 #include "modules/module.h"
 
@@ -15,13 +16,26 @@ public:
 
     ~DataBroker();
 
-    void loadModules(const QJsonArray& moduleArray);
     bool loadConfiguration();
+    void loadModules(const QJsonArray& moduleArray);
 
     QList<Module*> getModules();    
+    bool areAllMandatoryModulesInState(TcpControlConnection::ControlStateType state);
+
     void timerEvent(QTimerEvent *event);
 
+    void disconnectModules();
+    void connectModules();
+    void readyModules();
+    void startModules();
+    void resetModules();
+    void pauseModules();
+    void resumeModules();
+
+    void autostartPlay();
+
 signals:
+
 
 public slots:
 
@@ -39,8 +53,12 @@ protected:
     void buildDataPacketAndSend(Module *module);
     void appendDataList(Module *fromModule, QStringList *dataList, Broker::DataCollection *packet);
 
+    void initTimeoutTimers();
+
+
 private:
 
+    bool allModulesRunning = false;
     bool autoStart = true;
     int dataRate = 0;
 
@@ -48,6 +66,8 @@ private:
     QMap <QString, Module*> modules;
     QString workingDirectoryPath;
 
+    int connectTimeout = 2000, readyTimeout = 1000, startTimeout = 2000, retryTimeout = 5000;
+    QTimer connectTimer, readyTimer, startTimer, retryTimer;
 };
 
 #endif // MessageBroker_H

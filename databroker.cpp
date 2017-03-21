@@ -16,12 +16,6 @@ DataBroker::DataBroker(QObject *parent) : QObject(parent)
 
     //QString workingDirectoryPath = QDir::current().absolutePath() + "/config";
 
-
-    if(!loadConfiguration()) {
-        exit(1);
-        return;
-    }
-
     workingDirectoryPath = "/home/filipe/Documents/Workspace/portfolio/simulation_framework/build/config";
 
     QDir workingDir(workingDirectoryPath);
@@ -30,7 +24,18 @@ DataBroker::DataBroker(QObject *parent) : QObject(parent)
         return;
     }
 
-    startTimer(dataRate);
+    if(!loadConfiguration()) {
+        exit(1);
+        return;
+    }
+
+    initTimeoutTimers();
+
+    if(autoStart) {
+        autostartPlay();
+    }
+
+    QObject::startTimer(dataRate);
 }
 
 DataBroker::~DataBroker()
@@ -92,6 +97,18 @@ bool DataBroker::loadConfiguration()
 QList<Module *> DataBroker::getModules()
 {
     return modules.values();
+}
+
+bool DataBroker::areAllMandatoryModulesInState(TcpControlConnection::ControlStateType state)
+{
+    for(Module *module : modules) {
+        if(module->getConfiguration()->getMandatory()){
+            if(module->getCommunication()->getControlConnection()->getState() != state) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 void DataBroker::routeCommand(Module *sourceModule, Broker::ControlCommand *command)
@@ -198,7 +215,9 @@ void DataBroker::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event)
     for(Module *module : modules) {
-        //buildDataPacketAndSend(module);
+        if(allModulesRunning) {
+            buildDataPacketAndSend(module);
+        }
     }
 }
 
@@ -209,12 +228,13 @@ void DataBroker::buildDataPacketAndSend(Module *module)
 
     for(QString fromModule : map->keys()) {
         QStringList *dataList = map->value(fromModule);
-        Module *module = modules.value(fromModule, nullptr);
-        if(dataList->size() && module) {
-            appendDataList(module, dataList, &dataPacket);
+        Module *moduleDataSource = modules.value(fromModule, nullptr);
+        if(dataList->size() && moduleDataSource) {
+            appendDataList(moduleDataSource, dataList, &dataPacket);
         }
     }
-    dataPacket.set_provider_name(module->getConfiguration()->getId().toStdString());
+    dataPacket.set_provider_name("");
+    //dataPacket.set_provider_name(module->getConfiguration()->getId().toStdString());
     dataPacket.set_timestamp(QDateTime::currentMSecsSinceEpoch());
     module->sendDataPacket(&dataPacket);
 }
@@ -231,5 +251,144 @@ void DataBroker::appendDataList(Module *fromModule, QStringList *dataList,
         }
     }
 }
+
+void DataBroker::initTimeoutTimers()
+{
+    readyTimer.setInterval(readyTimeout);
+    startTimer.setInterval(startTimeout);
+    retryTimer.setInterval(retryTimeout);
+    connectTimer.setInterval(connectTimeout);
+
+    readyTimer.setSingleShot(true);
+    startTimer.setSingleShot(true);
+    retryTimer.setSingleShot(true);
+    connectTimer.setSingleShot(true);
+
+    connect(&connectTimer, &QTimer::timeout, [this](){
+        if(areAllMandatoryModulesInState(TcpControlConnection::STATE_IDLE)) {
+            if(autoStart) {
+                readyModules();
+            }
+        }
+        else {
+            if(autoStart) {
+                retryTimer.start();
+            }
+            else {
+                /*TODO: SEND FEEDBACK TO MASTERS */
+            }
+        }
+    });
+
+
+    connect(&readyTimer, &QTimer::timeout, [this](){
+        if(areAllMandatoryModulesInState(TcpControlConnection::STATE_READY)) {
+            if(autoStart) {
+                startModules();
+            }
+            else {
+                /* TODO: SEND FEEDBACK TO MASTERS */
+            }
+        }
+        else {
+            resetModules();
+            if(autoStart) {
+                retryTimer.start();
+            }
+            else {
+                /*TODO: SEND FEEDBACK TO MASTERS */
+            }
+        }
+    });
+
+    connect(&startTimer, &QTimer::timeout, [this](){
+        allModulesRunning = areAllMandatoryModulesInState(TcpControlConnection::STATE_RUNNING);
+        if(!allModulesRunning) {
+            if(autoStart) {
+                retryTimer.start();
+            }
+            else {
+                /* TODO: Send feedback to masters */
+            }
+        }
+    });
+
+    connect(&retryTimer, &QTimer::timeout, [this](){
+        if(autoStart) {
+            qDebug() << "RETRY AUTOSTART";
+            resetModules();
+        }
+        else {
+            /*TODO: SEND FEEDBACK TO MASTERS */
+        }
+    });
+}
+
+void DataBroker::disconnectModules()
+{
+    for(Module *m : getModules()) {
+        m->getCommunication()->getControlConnection()->deInitConnection();
+    }
+
+    allModulesRunning = false;
+}
+
+void DataBroker::connectModules()
+{
+    for(Module *m : getModules()) {
+        m->getCommunication()->getControlConnection()->initConnection();
+    }
+
+    connectTimer.start();
+}
+
+void DataBroker::readyModules()
+{
+    for(Module *m : getModules()) {
+        m->getCommunication()->getControlConnection()->sendDefaultReadyCommand();
+    }
+
+    readyTimer.start();
+}
+
+void DataBroker::startModules()
+{
+    for(Module *m : getModules()) {
+        m->getCommunication()->getControlConnection()->sendDefaultStartCommand();
+    }
+
+    startTimer.start();
+}
+
+void DataBroker::resetModules()
+{
+    for(Module *m : getModules()) {
+        m->getCommunication()->getControlConnection()->sendDefaultResetCommand();
+    }
+}
+
+void DataBroker::autostartPlay()
+{
+    connectModules();
+}
+
+void DataBroker::pauseModules()
+{
+    for(Module *m : getModules()) {
+        m->getCommunication()->getControlConnection()->sendDefaultPauseCommand();
+    }
+
+    allModulesRunning = false;
+}
+
+void DataBroker::resumeModules()
+{
+    for(Module *m : getModules()) {
+        m->getCommunication()->getControlConnection()->sendDefaultResumeCommand();
+    }
+
+    startTimer.start();
+}
+
 
 

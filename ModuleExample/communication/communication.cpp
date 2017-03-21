@@ -6,13 +6,14 @@
 #include <QDateTime>
 #include <QTimerEvent>
 
-#define VISION
+//#define VISION
 
 #ifdef VISION
 #define PROVIDER_NAME "vision"
 #define DATA_PORT 6001
 #define COMMAND_PORT 6000
 #else
+
 #define PROVIDER_NAME "radio"
 #define DATA_PORT 6002
 #define COMMAND_PORT 6003
