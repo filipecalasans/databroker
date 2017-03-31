@@ -1,0 +1,19 @@
+{
+   "id": "master",
+   "name":"Master Mdoule",
+   "description": "This module Control the other modules remotelly",
+   "ip": "127.0.0.1",
+   "port_data":6005,
+   "port_control":6006,
+   "socket_type":"udp",
+   "mandatory": false,
+
+   "data_published": [ 
+   ],
+
+   "data_consumed": [ 
+   ],
+
+   "commands_consumed": [ 
+   ]	
+}
