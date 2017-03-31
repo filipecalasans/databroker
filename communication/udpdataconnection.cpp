@@ -66,10 +66,10 @@ bool UdpDataConnection::provideDataConsumed(Broker::DataCollection *dataCollecti
     Broker::DataCollection packet;
 
     if(payloadLen == 0) {
-        packet.SerializeToArray(static_buffer_out, MAX_DATAGRAM_SIZE);
-        qDebug() << QString(packet.DebugString().c_str());
+        bool ret = packet.SerializeToArray(static_buffer_out, MAX_DATAGRAM_SIZE);
+        qDebug() << "provideDataConsumed" << QString(packet.DebugString().c_str());
         ((QUdpSocket*)socket)->writeDatagram(static_buffer_out, packet.ByteSize(), QHostAddress(ip), port);
-        return true;
+        return ret;
     }
 
     while (payloadLen > 0 && index < dataCollection->data_provided_size()) {

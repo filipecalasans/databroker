@@ -78,16 +78,6 @@ bool DataBroker::loadConfiguration()
     dataRate = configurationObj.value("data_rate").toInt(0);
     autoStart = configurationObj.value("auto_start").toBool(true);
 
-    QJsonArray masterModules = configurationObj.value("master_modules").toArray();
-    for(QJsonValue master : masterModules) {
-        if(master.isString()) {
-            QString masterId = master.toString();
-            if(!masterId.isEmpty()) {
-                masterModules << master.toString();
-            }
-        }
-    }
-
     QJsonArray modulesJsonArray = configurationObj.value("modules").toArray();
     loadModules(modulesJsonArray);
 
@@ -101,9 +91,13 @@ QList<Module *> DataBroker::getModules()
 
 bool DataBroker::areAllMandatoryModulesInState(TcpControlConnection::ControlStateType state)
 {
+    qDebug() << "DATA BROKER] Want to know: all modules are" << state;
+
     for(Module *module : modules) {
         if(module->getConfiguration()->getMandatory()){
+            qDebug() << "DATA BROKER] Want to know: all modules are" << state;
             if(module->getCommunication()->getControlConnection()->getState() != state) {
+                qDebug() << "[DATA BROKER]" << module->getConfiguration()->getName();
                 return false;
             }
         }
@@ -244,7 +238,9 @@ void DataBroker::buildDataPacketAndSend(Module *module)
     dataPacket.set_provider_name("");
     //dataPacket.set_provider_name(module->getConfiguration()->getId().toStdString());
     dataPacket.set_timestamp(QDateTime::currentMSecsSinceEpoch());
-    module->sendDataPacket(&dataPacket);
+    if(dataPacket.data_provided_size()) {
+        module->sendDataPacket(&dataPacket);
+    }
 }
 
 void DataBroker::appendDataList(Module *fromModule, QStringList *dataList,
@@ -275,7 +271,12 @@ void DataBroker::initTimeoutTimers()
     connect(&connectTimer, &QTimer::timeout, [this](){
         if(areAllMandatoryModulesInState(TcpControlConnection::STATE_IDLE)) {
             if(autoStart) {
+                qDebug() << "[BROKER] ready them";
                 readyModules();
+            }
+            else {
+                qDebug() << "[BROKER] all IDle";
+                allIdleFeedback();
             }
         }
         else {
@@ -292,10 +293,13 @@ void DataBroker::initTimeoutTimers()
     connect(&readyTimer, &QTimer::timeout, [this](){
         if(areAllMandatoryModulesInState(TcpControlConnection::STATE_READY)) {
             if(autoStart) {
+                qDebug() << "[BROKER] start modules";
                 startModules();
             }
             else {
                 /* TODO: SEND FEEDBACK TO MASTERS */
+                qDebug() << "[BROKER] all ready";
+                allReadyFeedback();
             }
         }
         else {
@@ -317,7 +321,11 @@ void DataBroker::initTimeoutTimers()
             }
             else {
                 /* TODO: Send feedback to masters */
+
             }
+        }
+        else {
+            allRunningFeedback();
         }
     });
 
@@ -353,7 +361,8 @@ void DataBroker::connectModules()
 void DataBroker::readyModules()
 {
     for(Module *m : getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultReadyCommand();
+        m->getCommunication()->getControlConnection()->
+                sendDefaultReadyCommand();
     }
 
     readyTimer.start();
@@ -362,7 +371,8 @@ void DataBroker::readyModules()
 void DataBroker::startModules()
 {
     for(Module *m : getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultStartCommand();
+        m->getCommunication()->getControlConnection()->
+                sendDefaultStartCommand();
     }
 
     startTimer.start();
@@ -371,7 +381,8 @@ void DataBroker::startModules()
 void DataBroker::resetModules()
 {
     for(Module *m : getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultResetCommand();
+        m->getCommunication()->getControlConnection()->
+                sendDefaultResetCommand();
     }
 }
 
@@ -383,7 +394,8 @@ void DataBroker::autostartPlay()
 void DataBroker::pauseModules()
 {
     for(Module *m : getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultPauseCommand();
+        m->getCommunication()->getControlConnection()->
+                sendDefaultPauseCommand();
     }
 
     allModulesRunning = false;
@@ -392,10 +404,51 @@ void DataBroker::pauseModules()
 void DataBroker::resumeModules()
 {
     for(Module *m : getModules()) {
-        m->getCommunication()->getControlConnection()->sendDefaultResumeCommand();
+        m->getCommunication()->getControlConnection()->
+                sendDefaultResumeCommand();
     }
 
     startTimer.start();
+}
+
+void DataBroker::allIdleFeedback()
+{
+    for(Module *m : getModules()) {
+        if(m->isMaster()) {
+            m->getCommunication()->getControlConnection()->
+                    sendDefaultAllIdleCommand();
+        }
+    }
+}
+
+void DataBroker::allReadyFeedback()
+{
+    for(Module *m : getModules()) {
+        if(m->isMaster()) {
+            m->getCommunication()->getControlConnection()->
+                    sendDefaultAllReadyCommand();
+        }
+    }
+}
+
+void DataBroker::allPausedFeedback()
+{
+    for(Module *m : getModules()) {
+        if(m->isMaster()) {
+            m->getCommunication()->getControlConnection()->
+                    sendDefaultAllPausedCommand();
+        }
+    }
+}
+
+void DataBroker::allRunningFeedback()
+{
+    for(Module *m : getModules()) {
+        if(m->isMaster()) {
+            m->getCommunication()->getControlConnection()->
+                    sendDefaultAllRunningCommand();
+        }
+    }
 }
 
 void DataBroker::routeCmdFromMaster(const QString& command)
@@ -417,7 +470,7 @@ void DataBroker::routeCmdFromMaster(const QString& command)
         return;
     }
     if(command == TcpControlConnection::CMD_RESUME) {
-        resetModules();
+        resumeModules();
         return;
     }
 }

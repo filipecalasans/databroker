@@ -6,7 +6,6 @@
 #include <QTcpServer>
 #include <QDebug>
 
-
 const QString TcpControlConnection::CMD_RESET = QString("RESET");
 const QString TcpControlConnection::CMD_READY = QString("READY");
 const QString TcpControlConnection::CMD_START = QString("START");
@@ -18,6 +17,10 @@ const QString TcpControlConnection::REPLY_READY = QString("REPLY READY");
 const QString TcpControlConnection::REPLY_RUNNING = QString("REPLY RUNNING");
 const QString TcpControlConnection::REPLY_PAUSE = QString("REPLY PAUSE");
 
+const QString TcpControlConnection::ALL_IDLE = QString("ALL IDLE");
+const QString TcpControlConnection::ALL_READY = QString("ALL READY");
+const QString TcpControlConnection::ALL_RUNNING = QString("ALL RUNNING");
+const QString TcpControlConnection::ALL_PAUSE = QString("ALL PAUSE");
 
 TcpControlConnection::TcpControlConnection(QObject *parent) : AbstractControlConnection(parent)
 {
@@ -36,6 +39,7 @@ TcpControlConnection::TcpControlConnection(QObject *parent) : AbstractControlCon
             connect(socket, &QTcpSocket::stateChanged, this, &TcpControlConnection::handleClientStateChanged);
             connect(socket, &QTcpSocket::readyRead, this, &TcpControlConnection::readData);
             setState(ControlStateType::STATE_IDLE);
+            setMasterState(MasterControlStateType::MASTER_STATE_ALL_UNDEFINED);
         }
         else {
             QTcpSocket *discard = server->nextPendingConnection();
@@ -158,8 +162,10 @@ void TcpControlConnection::setState(const ControlStateType &value)
     }
 }
 
-void TcpControlConnection::runStateTransition(Broker::ControlCommand *cmd)
+bool TcpControlConnection::runStateTransition(Broker::ControlCommand *cmd)
 {
+    if(!isDefaultControlCommand(cmd)) { return false; }
+
     QString command(cmd->command().c_str());
 
     ControlStateType nxtState = getState();
@@ -225,6 +231,7 @@ void TcpControlConnection::runStateTransition(Broker::ControlCommand *cmd)
     }
 
     setState(nxtState);
+    return true;
 }
 
 bool TcpControlConnection::isDefaultControlCommand(Broker::ControlCommand *cmd)
@@ -236,6 +243,42 @@ bool TcpControlConnection::isDefaultControlCommand(Broker::ControlCommand *cmd)
     if(cmd->command() == CMD_START.toStdString()) { return true; }
 
     return false;
+}
+
+void TcpControlConnection::setMasterState(const MasterControlStateType &value)
+{
+    if(masterState != value) {
+        masterState = value;
+        emit masterStateChanged(masterState);
+    }
+}
+
+bool TcpControlConnection::processMasterState(Broker::ControlCommand *cmd)
+{
+    QString commandString(cmd->command().c_str());
+    if(commandString == ALL_IDLE) {
+        setMasterState(MasterControlStateType::MASTER_STATE_ALL_IDLE);
+        return true;
+    }
+    if(commandString == ALL_PAUSE) {
+        setMasterState(MasterControlStateType::MASTER_STATE_ALL_PAUSE);
+        return true;
+    }
+    if(commandString == ALL_READY) {
+        setMasterState(MasterControlStateType::MASTER_STATE_ALL_READY);
+        return true;
+    }
+    if(commandString == ALL_RUNNING) {
+        setMasterState(MasterControlStateType::MASTER_STATE_ALL_RUNNING);
+        return true;
+    }
+
+    return false;
+}
+
+TcpControlConnection::MasterControlStateType TcpControlConnection::getMasterState() const
+{
+    return masterState;
 }
 
 void TcpControlConnection::readData()
@@ -276,13 +319,18 @@ void TcpControlConnection::readData()
 
             Broker::ControlCommand cmd;
             if(receiveControlCommand(&cmd)) {
-                if(isDefaultControlCommand(&cmd)) {
-                    runStateTransition(&cmd);
+
+                if(processMasterState(&cmd)) {
+                    continue;
                 }
-                else {
-                    bufferReady = true;
-                    emit receivedControlCommand();
+
+                if(runStateTransition(&cmd)) {
+                    continue;
                 }
+
+                bufferReady = true;
+                emit receivedControlCommand();
+
             }
         }
     }
@@ -298,11 +346,13 @@ void TcpControlConnection::handleClientStateChanged(QAbstractSocket::SocketState
             socket = nullptr;
         }
         setState(ControlStateType::STATE_DISCONNECTED);
+        setMasterState(MasterControlStateType::MASTER_STATE_ALL_UNDEFINED);
     }
     else if(state == QAbstractSocket::ConnectedState) {
         setState(ControlStateType::STATE_IDLE);
     }
     else {
         setState(ControlStateType::STATE_DISCONNECTED);
+        setMasterState(MasterControlStateType::MASTER_STATE_ALL_UNDEFINED);
     }
 }

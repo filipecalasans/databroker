@@ -28,6 +28,7 @@ SOURCES += main.cpp \
     communication/abstractdatacontrol.cpp \
     ../protocol/control.pb.cc
 
+INCLUDEPATH += ../protocol
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings

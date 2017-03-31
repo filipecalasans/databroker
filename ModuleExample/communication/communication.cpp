@@ -65,6 +65,9 @@ bool Communication::initControlConnection()
 {
     controlConnection = new TcpControlConnection();
 
+    connect(controlConnection, &TcpControlConnection::masterStateChanged,
+            this, &Communication::masterStateChanged);
+
     connect(controlConnection, &TcpControlConnection::controlStateChanged,
             [this](TcpControlConnection::ControlStateType state) {
 

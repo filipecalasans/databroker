@@ -20,6 +20,15 @@ public:
     };
     Q_ENUM(ControlStateType)
 
+    enum MasterControlStateType {
+        MASTER_STATE_ALL_UNDEFINED = 0,
+        MASTER_STATE_ALL_IDLE = 1,
+        MASTER_STATE_ALL_READY = 2,
+        MASTER_STATE_ALL_RUNNING = 3,
+        MASTER_STATE_ALL_PAUSE = 4
+    };
+    Q_ENUM(MasterControlStateType)
+
     static const QString CMD_RESET;
     static const QString CMD_READY;
     static const QString CMD_START;
@@ -30,6 +39,11 @@ public:
     static const QString REPLY_READY;
     static const QString REPLY_RUNNING;
     static const QString REPLY_PAUSE;
+
+    static const QString ALL_IDLE;
+    static const QString ALL_READY;
+    static const QString ALL_RUNNING;
+    static const QString ALL_PAUSE;
 
     TcpControlConnection(QObject *parent = 0);
     TcpControlConnection(quint16 portNum, QObject *parent = 0);
@@ -45,16 +59,23 @@ public:
     bool notifyMyState();
 
     ControlStateType getState() const;
+    MasterControlStateType getMasterState() const;
+
 
 protected:
 
     void setState(const ControlStateType &value);
-    void runStateTransition(Broker::ControlCommand *cmd);
+    bool runStateTransition(Broker::ControlCommand *cmd);
     bool isDefaultControlCommand(Broker::ControlCommand *cmd);
+    bool processMasterState(Broker::ControlCommand *cmd);
+    void setMasterState(const MasterControlStateType &value);
+
 
 private:
 
     ControlStateType state = STATE_DISCONNECTED;
+    MasterControlStateType masterState = MASTER_STATE_ALL_UNDEFINED;
+
     QDataStream *stream = nullptr;
     QTcpServer *server = nullptr;
 
@@ -66,6 +87,7 @@ private slots:
 signals:
 
     void controlStateChanged(const ControlStateType& state);
+    void masterStateChanged(const MasterControlStateType& state);
 
 };
 

@@ -13,6 +13,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     comm = new Communication(DATA_PORT, COMMAND_PORT);
+
+    connect(comm, &Communication::masterStateChanged,
+            [this](const TcpControlConnection::MasterControlStateType& state) {
+        qDebug() << "[Master State]" << state;
+    });
 }
 
 MainWindow::~MainWindow()

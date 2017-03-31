@@ -32,6 +32,11 @@ public:
     void pauseModules();
     void resumeModules();
 
+    void allIdleFeedback();
+    void allReadyFeedback();
+    void allPausedFeedback();
+    void allRunningFeedback();
+
     void autostartPlay();
 
 signals:

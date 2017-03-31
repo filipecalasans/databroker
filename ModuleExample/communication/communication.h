@@ -33,6 +33,8 @@ protected:
 
 signals:
 
+    void masterStateChanged(const TcpControlConnection::MasterControlStateType &value);
+
 public slots:
 
 private:

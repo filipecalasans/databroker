@@ -119,7 +119,8 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
     portData = moduleObj.value("port_data").toInt();
     portControl = moduleObj.value("port_control").toInt();
     socketDataType = moduleObj.value("socket_type").toString() == "tcp" ? QAbstractSocket::TcpSocket : QAbstractSocket::UdpSocket;
-    mandatory - moduleObj.value("mandatory").toBool(true);
+    mandatory = moduleObj.value("mandatory").toBool(true);
+
     master = moduleObj.value("master").toBool(false);
 
     QJsonArray dataPublished = moduleObj.value("data_published").toArray();

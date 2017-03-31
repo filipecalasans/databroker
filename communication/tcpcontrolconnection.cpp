@@ -15,6 +15,11 @@ const QString TcpControlConnection::REPLY_READY = QString("REPLY READY");
 const QString TcpControlConnection::REPLY_RUNNING = QString("REPLY RUNNING");
 const QString TcpControlConnection::REPLY_PAUSE = QString("REPLY PAUSE");
 
+const QString TcpControlConnection::ALL_IDLE = QString("ALL IDLE");
+const QString TcpControlConnection::ALL_READY = QString("ALL READY");
+const QString TcpControlConnection::ALL_RUNNING = QString("ALL RUNNING");
+const QString TcpControlConnection::ALL_PAUSE = QString("ALL PAUSE");
+
 TcpControlConnection::TcpControlConnection(bool masterModule, QObject *parent) :
     AbstractControlConnection(parent),
     masterModule(masterModule)
@@ -147,6 +152,39 @@ bool TcpControlConnection::sendDefaultPauseCommand()
 {
     Broker::ControlCommand cmd;
     cmd.set_command(CMD_PAUSE.toStdString().c_str());
+    cmd.set_reply_required(true);
+    return sendControlCommand(&cmd);
+}
+
+bool TcpControlConnection::sendDefaultAllIdleCommand()
+{
+    Broker::ControlCommand cmd;
+    cmd.set_command(ALL_IDLE.toStdString().c_str());
+    cmd.set_reply_required(true);
+    return sendControlCommand(&cmd);
+}
+
+
+bool TcpControlConnection::sendDefaultAllReadyCommand()
+{
+    Broker::ControlCommand cmd;
+    cmd.set_command(ALL_READY.toStdString().c_str());
+    cmd.set_reply_required(true);
+    return sendControlCommand(&cmd);
+}
+
+bool TcpControlConnection::sendDefaultAllPausedCommand()
+{
+    Broker::ControlCommand cmd;
+    cmd.set_command(ALL_PAUSE.toStdString().c_str());
+    cmd.set_reply_required(true);
+    return sendControlCommand(&cmd);
+}
+
+bool TcpControlConnection::sendDefaultAllRunningCommand()
+{
+    Broker::ControlCommand cmd;
+    cmd.set_command(ALL_RUNNING.toStdString().c_str());
     cmd.set_reply_required(true);
     return sendControlCommand(&cmd);
 }

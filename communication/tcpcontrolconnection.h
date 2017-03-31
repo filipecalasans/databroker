@@ -30,6 +30,11 @@ public:
     static const QString REPLY_RUNNING;
     static const QString REPLY_PAUSE;
 
+    static const QString ALL_IDLE;
+    static const QString ALL_READY;
+    static const QString ALL_RUNNING;
+    static const QString ALL_PAUSE;
+
     explicit TcpControlConnection(bool masterModule, QObject *parent = 0);
     explicit TcpControlConnection(bool masterModule, const QString& ipAddress,
                                   quint16 portNum, QObject *parent = 0);
@@ -52,8 +57,12 @@ public:
     bool sendDefaultPauseCommand();
     bool sendDefaultResumeCommand();
 
-    ControlStateType getState() const;
+    bool sendDefaultAllIdleCommand();
+    bool sendDefaultAllReadyCommand();
+    bool sendDefaultAllRunningCommand();
+    bool sendDefaultAllPausedCommand();
 
+    ControlStateType getState() const;
 
 signals:
 

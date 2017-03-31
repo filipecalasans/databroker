@@ -120,12 +120,11 @@ void UdpDataConnection::handleDatagram()
         }
 
         setBrokerIp(brokerAddress.toString());
+        setIsReady(true);
 
         qDebug() << "[HANDLE DATAGRAM] ignore?" << ignoreDatagram;
 
         if(len == 0) { continue; }
-
-        setIsReady(true);
 
         if(ignoreDatagram) { // Ignores the first datagram !!!
             qDebug() << "[HANDLE DATAGRAM] Received Empty Datagram";
