@@ -4,6 +4,7 @@
    "master_modules": [ "vision" ],
    "modules": [
       "vision.json",
-      "radio.json"
+      "radio.json",
+      "master.json"
    ]
 }

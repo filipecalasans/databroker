@@ -17,9 +17,14 @@ class Communication : public QObject
     Q_OBJECT
 public:
 
-    explicit Communication(QObject *parent = 0);
+    explicit Communication(quint16 dataPort, quint16 controlPort, QObject *parent = 0);
 
     void timerEvent(QTimerEvent *event);
+
+    bool sendControlCommand(Broker::ControlCommand *command);
+
+    QString getModuleName() const;
+    void setModuleName(const QString &value);
 
 protected:
 
@@ -31,6 +36,9 @@ signals:
 public slots:
 
 private:
+
+    quint16 dataPort, controlPort;
+    QString moduleName;
 
 #ifdef TCP_CONNECTION
     TcpDataConnection *dataConnection = nullptr;

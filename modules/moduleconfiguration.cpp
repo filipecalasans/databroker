@@ -120,6 +120,7 @@ bool ModuleConfiguration::loadFromJsonFile(const QString& jsonPath)
     portControl = moduleObj.value("port_control").toInt();
     socketDataType = moduleObj.value("socket_type").toString() == "tcp" ? QAbstractSocket::TcpSocket : QAbstractSocket::UdpSocket;
     mandatory - moduleObj.value("mandatory").toBool(true);
+    master = moduleObj.value("master").toBool(false);
 
     QJsonArray dataPublished = moduleObj.value("data_published").toArray();
     if(dataPublished.size()) {
@@ -198,6 +199,16 @@ const QStringList *ModuleConfiguration::getCommandsConsumedByModule(const QStrin
 const QStringList *ModuleConfiguration::getDataConsumedByModule(const QString &moduleId) const
 {
     return data_consumed.value(moduleId, nullptr);
+}
+
+bool ModuleConfiguration::getMaster() const
+{
+    return master;
+}
+
+void ModuleConfiguration::setMaster(bool value)
+{
+    master = value;
 }
 
 QString ModuleConfiguration::getId() const

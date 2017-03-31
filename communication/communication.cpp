@@ -23,7 +23,7 @@ Communication::Communication(const ModuleConfiguration *config, QObject *parent)
             }
         }
 
-        qDebug() << "[STATE RCVD]" << state;
+        qDebug() << "[STATE RCVD - " << configuration->getName() << "]" << state;
     });
 }
 
@@ -79,6 +79,7 @@ void Communication::initDataConnection(const ModuleConfiguration *configuration)
 void Communication::initControlConnection(const ModuleConfiguration *configuration)
 {
     controlConnection = new TcpControlConnection(
+                            configuration->getMaster(),
                             configuration->getIp(),
                             configuration->getPortControl());
 
@@ -89,6 +90,17 @@ void Communication::initControlConnection(const ModuleConfiguration *configurati
 AbstractDataConnection *Communication::getDataConnection() const
 {
     return dataConnection;
+}
+
+bool Communication::isMasterControlCommand(const QString &commandString)
+{
+    if(commandString == TcpControlConnection::CMD_RESET) { return true; }
+    if(commandString == TcpControlConnection::CMD_PAUSE) { return true; }
+    if(commandString == TcpControlConnection::CMD_READY) { return true; }
+    if(commandString == TcpControlConnection::CMD_START) { return true; }
+    if(commandString == TcpControlConnection::CMD_RESUME) { return true; }
+
+    return false;
 }
 
 TcpControlConnection *Communication::getControlConnection() const

@@ -90,6 +90,9 @@ public:
     const QStringList *getCommandsConsumedByModule(const QString &moduleId) const;
     const QStringList *getDataConsumedByModule(const QString &moduleId) const;
 
+    bool getMaster() const;
+    void setMaster(bool value);
+
 private:
 
     QString id;
@@ -113,6 +116,7 @@ private:
 
     bool mandatory = true;
     bool locallyProvided = true;
+    bool master = false;
 
     /* Connection Configuration */
     QString ip;

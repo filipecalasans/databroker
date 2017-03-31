@@ -6,32 +6,22 @@
 #include <QDateTime>
 #include <QTimerEvent>
 
-//#define VISION
-
-#ifdef VISION
-#define PROVIDER_NAME "vision"
-#define DATA_PORT 6001
-#define COMMAND_PORT 6000
-#else
-
-#define PROVIDER_NAME "radio"
-#define DATA_PORT 6002
-#define COMMAND_PORT 6003
-#endif
-
-Communication::Communication(QObject *parent) : QObject(parent)
+Communication::Communication(quint16 dataPort, quint16 controlPort, QObject *parent) :
+    QObject(parent),
+    dataPort(dataPort),
+    controlPort(controlPort)
 {
     initControlConnection();
     initDataConnection();
 
-    startTimer(500);
+//    startTimer(500);
 }
 
 bool Communication::initDataConnection()
 {
 #ifdef TCP_CONNECTION
 
-    dataConnection = new TcpDataConnection(6001);
+    dataConnection = new TcpDataConnection(dataPort);
 
     connect(dataConnection, &AbstractDataConnection::receivedDataConsumed, [this](){
         Broker::DataCollection packet;
@@ -40,12 +30,12 @@ bool Communication::initDataConnection()
         qDebug() << "[CONSUMED]" << QString::fromStdString(packet.DebugString());
     });
 
-    if(!dataConnection->initConnection(6001)) {
+    if(!dataConnection->initConnection(dataPort)) {
         qDebug() << "Can not init connection";
         return false;
     }
     else {
-        qDebug() << "Listening port 60001";
+        qDebug() << "Listening port 6001";
     }
 #else
 
@@ -59,7 +49,7 @@ bool Communication::initDataConnection()
         qDebug() << "============================================================================";
     });
 
-    if(!dataConnection->initConnection(DATA_PORT)) {
+    if(!dataConnection->initConnection(dataPort)) {
         qDebug() << "Can not init connection";
         return false;
     }
@@ -91,8 +81,8 @@ bool Communication::initControlConnection()
         qDebug() << "============================================================================";
     });
 
-    if(!controlConnection->initConnection(COMMAND_PORT)) {
-        qDebug() << "Can not init control connection";
+    if(!controlConnection->initConnection(controlPort)) {
+        qDebug() << "Can not init control connection port:" << controlPort;
         return false;
     }
     else {
@@ -100,6 +90,16 @@ bool Communication::initControlConnection()
     }
 
     return true;
+}
+
+QString Communication::getModuleName() const
+{
+    return moduleName;
+}
+
+void Communication::setModuleName(const QString &value)
+{
+    moduleName = value;
 }
 
 void Communication::timerEvent(QTimerEvent *event)
@@ -112,7 +112,7 @@ void Communication::timerEvent(QTimerEvent *event)
         Broker::DataCollection data;
 
 #ifdef VISION
-        data.set_provider_name(PROVIDER_NAME);
+        data.set_provider_name(getModuleName().toStdString());
         data.set_timestamp(QDateTime::currentDateTime().toMSecsSinceEpoch());
         for(int i=0; i<5; i++) {
             Broker::Data *p = data.add_data_provided();
@@ -126,7 +126,7 @@ void Communication::timerEvent(QTimerEvent *event)
         }
 #else
 
-        data.set_provider_name(PROVIDER_NAME);
+        data.set_provider_name(getModuleName().toStdString());
         data.set_timestamp(QDateTime::currentDateTime().toMSecsSinceEpoch());
         for(int i=0; i<2; i++) {
             Broker::Data *p = data.add_data_provided();
@@ -174,3 +174,12 @@ void Communication::timerEvent(QTimerEvent *event)
     }
 
 }
+
+bool Communication::sendControlCommand(Broker::ControlCommand *command)
+{
+    if(controlConnection->getState() != TcpControlConnection::STATE_DISCONNECTED) {
+        return controlConnection->sendControlCommand(command);
+    }
+    return false;
+}
+

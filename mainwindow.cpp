@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     broker = new DataBroker();
-
 }
 
 MainWindow::~MainWindow()

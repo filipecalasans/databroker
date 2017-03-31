@@ -10,12 +10,14 @@ const QString TcpControlConnection::CMD_START = QString("START");
 const QString TcpControlConnection::CMD_PAUSE = QString("PAUSE");
 const QString TcpControlConnection::CMD_RESUME = QString("RESUME");
 
-const QString TcpControlConnection::REPLY_IDLE = QString("IDLE");
-const QString TcpControlConnection::REPLY_READY = QString("READY");
-const QString TcpControlConnection::REPLY_RUNNING = QString("RUNNING");
-const QString TcpControlConnection::REPLY_PAUSE = QString("PAUSE");
+const QString TcpControlConnection::REPLY_IDLE = QString("REPLY IDLE");
+const QString TcpControlConnection::REPLY_READY = QString("REPLY READY");
+const QString TcpControlConnection::REPLY_RUNNING = QString("REPLY RUNNING");
+const QString TcpControlConnection::REPLY_PAUSE = QString("REPLY PAUSE");
 
-TcpControlConnection::TcpControlConnection(QObject *parent) : AbstractControlConnection(parent)
+TcpControlConnection::TcpControlConnection(bool masterModule, QObject *parent) :
+    AbstractControlConnection(parent),
+    masterModule(masterModule)
 {
     socket = new QTcpSocket();
     stream = new QDataStream(socket);
@@ -38,9 +40,9 @@ TcpControlConnection::TcpControlConnection(QObject *parent) : AbstractControlCon
     connect(socket, &QTcpSocket::readyRead, this, &TcpControlConnection::readData);
 }
 
-TcpControlConnection::TcpControlConnection(
+TcpControlConnection::TcpControlConnection(bool masterModule,
         const QString& ipAddress, quint16 portNum, QObject *parent) :
-    TcpControlConnection(parent)
+    TcpControlConnection(masterModule, parent)
 {
     setIp(ipAddress);
     setPort(portNum);

@@ -25,6 +25,8 @@ public:
 
     AbstractDataConnection *getDataConnection() const;
 
+    static bool isMasterControlCommand(const QString &commandString);
+
 signals:
 
     void receivedDataPublished();

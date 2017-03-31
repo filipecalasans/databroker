@@ -30,8 +30,9 @@ public:
     static const QString REPLY_RUNNING;
     static const QString REPLY_PAUSE;
 
-    explicit TcpControlConnection(QObject *parent = 0);
-    explicit TcpControlConnection(const QString& ipAddress, quint16 portNum, QObject *parent = 0);
+    explicit TcpControlConnection(bool masterModule, QObject *parent = 0);
+    explicit TcpControlConnection(bool masterModule, const QString& ipAddress,
+                                  quint16 portNum, QObject *parent = 0);
 
     virtual ~TcpControlConnection();
 
@@ -73,6 +74,8 @@ private:
     QByteArray *dataOut = nullptr;
 
     quint64 count;
+
+    bool masterModule = false;
 
 private slots:
 

@@ -64,11 +64,11 @@ bool UdpDataConnection::provideDataPublished(Broker::DataCollection *dataCollect
                 Broker::Data *newData = packet.add_data_provided();
                 *newData = dataElement;
                 index++;
-//                qDebug() << "[UdpDataConnection::provideDataConsumed] index"
-//                         << index << packet.ByteSize() << dataElement.ByteSize();
+//              qDebug() << "[UdpDataConnection::provideDataConsumed] index"
+//                       << index << packet.ByteSize() << dataElement.ByteSize();
             }
             else {
-//                qDebug() << "======= BREAK ========";
+//              qDebug() << "======= BREAK ========";
                 break;
             }
         }
@@ -113,14 +113,17 @@ void UdpDataConnection::handleDatagram()
          * Pass in the controlConnection.
          */
         len = udpsocket->readDatagram(static_buffer_in, MAX_BUFFER_SIZE, &brokerAddress, &brokerPort);
-        setBrokerIp(brokerAddress.toString());
 
         bool ignoreDatagram = false;
         if(!getIsReady()) {
             ignoreDatagram = true;
         }
 
+        setBrokerIp(brokerAddress.toString());
+
         qDebug() << "[HANDLE DATAGRAM] ignore?" << ignoreDatagram;
+
+        if(len == 0) { continue; }
 
         setIsReady(true);
 

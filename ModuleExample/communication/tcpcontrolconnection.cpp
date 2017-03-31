@@ -13,10 +13,10 @@ const QString TcpControlConnection::CMD_START = QString("START");
 const QString TcpControlConnection::CMD_PAUSE = QString("PAUSE");
 const QString TcpControlConnection::CMD_RESUME = QString("RESUME");
 
-const QString TcpControlConnection::REPLY_IDLE = QString("IDLE");
-const QString TcpControlConnection::REPLY_READY = QString("READY");
-const QString TcpControlConnection::REPLY_RUNNING = QString("RUNNING");
-const QString TcpControlConnection::REPLY_PAUSE = QString("PAUSE");
+const QString TcpControlConnection::REPLY_IDLE = QString("REPLY IDLE");
+const QString TcpControlConnection::REPLY_READY = QString("REPLY READY");
+const QString TcpControlConnection::REPLY_RUNNING = QString("REPLY RUNNING");
+const QString TcpControlConnection::REPLY_PAUSE = QString("REPLY PAUSE");
 
 
 TcpControlConnection::TcpControlConnection(QObject *parent) : AbstractControlConnection(parent)

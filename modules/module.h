@@ -27,6 +27,7 @@ public:
     bool sendControlCommand(Broker::ControlCommand *command);
     bool sendDataPacket(Broker::DataCollection *dataCollection);
 
+    bool isMaster() const;
 
 protected:
 
@@ -48,6 +49,7 @@ private:
     QVariantMap currentData;
 
     quint64 lastTimeStamp = 0;
+
 };
 
 #endif // MODULE_H

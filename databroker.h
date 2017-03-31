@@ -46,7 +46,7 @@ protected:
 
     void routeCommandUsingPacketContent(Module *sourceModule, Broker::ControlCommand *command);
     void routeCommandUsingMap(Module *sourceModule, Broker::ControlCommand *command);
-    void forwardCommandToAllModule(Module *sourceModule, Broker::ControlCommand *command);
+    void forwardCommandToAllModules(Module *sourceModule, Broker::ControlCommand *command);
     void forwardCommandToDestinationsInPacket(Broker::ControlCommand *command);
     void forwardCommandUsingRouteMap(Module *sourceModule, Broker::ControlCommand *command);
 

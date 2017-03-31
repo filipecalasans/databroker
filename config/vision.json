@@ -6,6 +6,7 @@
    "port_data":6001,
    "port_control":6000,
    "socket_type":"udp",
+   "mandatory": false,
 
    "data_published": [ 
       {

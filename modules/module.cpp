@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QDateTime>
 
-
 Module::Module(const QString& configPath, QObject *parent) : QObject(parent)
 {
     configuration = new ModuleConfiguration();
@@ -87,6 +86,14 @@ bool Module::sendDataPacket(Broker::DataCollection *dataCollection)
 {
     if(communication) {
         return communication->getDataConnection()->provideDataConsumed(dataCollection);
+    }
+    return false;
+}
+
+bool Module::isMaster() const
+{
+    if(configuration) {
+        return configuration->getMaster();
     }
     return false;
 }

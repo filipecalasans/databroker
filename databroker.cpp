@@ -76,7 +76,7 @@ bool DataBroker::loadConfiguration()
     QJsonObject configurationObj = configuration.object();
 
     dataRate = configurationObj.value("data_rate").toInt(0);
-    autoStart = configurationObj.value("autoStart").toBool(true);
+    autoStart = configurationObj.value("auto_start").toBool(true);
 
     QJsonArray masterModules = configurationObj.value("master_modules").toArray();
     for(QJsonValue master : masterModules) {
@@ -135,7 +135,8 @@ void DataBroker::routeCommandUsingPacketContent(
     if(command->desitination_size() == 1) {
         QString destination = QString(command->desitination(0).c_str());
         if(destination == "all"){
-            forwardCommandToAllModule(sourceModule, command);
+            qDebug() << QString(command->DebugString().c_str());
+            forwardCommandToAllModules(sourceModule, command);
             return;
         }
     }
@@ -143,14 +144,16 @@ void DataBroker::routeCommandUsingPacketContent(
     forwardCommandToDestinationsInPacket(command);
 }
 
-void DataBroker::forwardCommandToAllModule(
+void DataBroker::forwardCommandToAllModules(
         Module *sourceModule, Broker::ControlCommand *command)
 {
-    for(Module *module : modules) {
-        if(sourceModule != module) {
-            qDebug() << "[TRY ROUT COMMAND] dest:" << module->getConfiguration()->getId();
+    QString commandString(command->command().c_str());
+
+    for(Module *module : modules) {        
+        if(sourceModule != module || Communication::isMasterControlCommand(commandString)) {
+            qDebug() << "[TRY ROUTE COMMAND] dest:" << module->getConfiguration()->getId();
             if(!module->sendControlCommand(command)) {
-                qDebug() << "[CANT ROUT COMMAND] dest:" << module->getConfiguration()->getId();
+                qDebug() << "[CANT ROUTE COMMAND] dest:" << module->getConfiguration()->getId();
             }
             qDebug() << "==================================";
         }
