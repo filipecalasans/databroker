@@ -46,6 +46,7 @@ protected:
 
     void routeCommandUsingPacketContent(Module *sourceModule, Broker::ControlCommand *command);
     void routeCommandUsingMap(Module *sourceModule, Broker::ControlCommand *command);
+    void routeCmdFromMaster(const QString &command);
     void forwardCommandToAllModules(Module *sourceModule, Broker::ControlCommand *command);
     void forwardCommandToDestinationsInPacket(Broker::ControlCommand *command);
     void forwardCommandUsingRouteMap(Module *sourceModule, Broker::ControlCommand *command);
@@ -54,7 +55,6 @@ protected:
     void appendDataList(Module *fromModule, QStringList *dataList, Broker::DataCollection *packet);
 
     void initTimeoutTimers();
-
 
 private:
 

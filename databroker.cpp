@@ -149,8 +149,13 @@ void DataBroker::forwardCommandToAllModules(
 {
     QString commandString(command->command().c_str());
 
-    for(Module *module : modules) {        
-        if(sourceModule != module || Communication::isMasterControlCommand(commandString)) {
+    if(Communication::isMasterControlCommand(commandString)) {
+        routeCmdFromMaster(commandString);
+        return;
+    }
+
+    for(Module *module : modules) {
+        if(sourceModule != module) {
             qDebug() << "[TRY ROUTE COMMAND] dest:" << module->getConfiguration()->getId();
             if(!module->sendControlCommand(command)) {
                 qDebug() << "[CANT ROUTE COMMAND] dest:" << module->getConfiguration()->getId();
@@ -391,6 +396,30 @@ void DataBroker::resumeModules()
     }
 
     startTimer.start();
+}
+
+void DataBroker::routeCmdFromMaster(const QString& command)
+{
+    if(command == TcpControlConnection::CMD_RESET) {
+        resetModules();
+        return;
+    }
+    if(command == TcpControlConnection::CMD_PAUSE) {
+        pauseModules();
+        return;
+    }
+    if(command == TcpControlConnection::CMD_READY) {
+        readyModules();
+        return;
+    }
+    if(command == TcpControlConnection::CMD_START) {
+        startModules();
+        return;
+    }
+    if(command == TcpControlConnection::CMD_RESUME) {
+        resetModules();
+        return;
+    }
 }
 
 

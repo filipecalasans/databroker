@@ -172,7 +172,6 @@ void Communication::timerEvent(QTimerEvent *event)
 #endif
 
     }
-
 }
 
 bool Communication::sendControlCommand(Broker::ControlCommand *command)
