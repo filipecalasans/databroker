@@ -45,6 +45,11 @@ public:
     static const QString ALL_RUNNING;
     static const QString ALL_PAUSE;
 
+    static const QString FAIL_ALL_IDLE;
+    static const QString FAIL_ALL_READY;
+    static const QString FAIL_ALL_RUNNING;
+    static const QString FAIL_ALL_PAUSE;
+
     TcpControlConnection(QObject *parent = 0);
     TcpControlConnection(quint16 portNum, QObject *parent = 0);
 

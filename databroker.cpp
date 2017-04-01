@@ -16,7 +16,7 @@ DataBroker::DataBroker(QObject *parent) : QObject(parent)
 
     //QString workingDirectoryPath = QDir::current().absolutePath() + "/config";
 
-    workingDirectoryPath = "/home/filipe/Documents/Workspace/portfolio/simulation_framework/build/config";
+    workingDirectoryPath = QString("/home/filipe/Documents/Workspace/portfolio/simulation_framework/build/config");
 
     QDir workingDir(workingDirectoryPath);
     if(!QDir::setCurrent(workingDirectoryPath)) {
@@ -262,11 +262,13 @@ void DataBroker::initTimeoutTimers()
     startTimer.setInterval(startTimeout);
     retryTimer.setInterval(retryTimeout);
     connectTimer.setInterval(connectTimeout);
+    pauseTimer.setInterval(pauseTimeout);
 
     readyTimer.setSingleShot(true);
     startTimer.setSingleShot(true);
     retryTimer.setSingleShot(true);
     connectTimer.setSingleShot(true);
+    pauseTimer.setSingleShot(true);
 
     connect(&connectTimer, &QTimer::timeout, [this](){
         if(areAllMandatoryModulesInState(TcpControlConnection::STATE_IDLE)) {
@@ -285,6 +287,7 @@ void DataBroker::initTimeoutTimers()
             }
             else {
                 /*TODO: SEND FEEDBACK TO MASTERS */
+                failAllIdleFeedback();
             }
         }
     });
@@ -309,6 +312,7 @@ void DataBroker::initTimeoutTimers()
             }
             else {
                 /*TODO: SEND FEEDBACK TO MASTERS */
+                failAllReadyFeedback();
             }
         }
     });
@@ -321,7 +325,7 @@ void DataBroker::initTimeoutTimers()
             }
             else {
                 /* TODO: Send feedback to masters */
-
+                failAllRunningFeedback();
             }
         }
         else {
@@ -338,6 +342,16 @@ void DataBroker::initTimeoutTimers()
             /*TODO: SEND FEEDBACK TO MASTERS */
         }
     });
+
+    connect(&pauseTimer, &QTimer::timeout, [this](){
+        if(areAllMandatoryModulesInState(TcpControlConnection::STATE_PAUSE)) {
+            allPausedFeedback();
+        }
+        else {
+            failAllPausedFeedback();
+        }
+    });
+
 }
 
 void DataBroker::disconnectModules()
@@ -384,6 +398,7 @@ void DataBroker::resetModules()
         m->getCommunication()->getControlConnection()->
                 sendDefaultResetCommand();
     }
+    connectTimer.start();
 }
 
 void DataBroker::autostartPlay()
@@ -399,6 +414,7 @@ void DataBroker::pauseModules()
     }
 
     allModulesRunning = false;
+    pauseTimer.start();
 }
 
 void DataBroker::resumeModules()
@@ -447,6 +463,46 @@ void DataBroker::allRunningFeedback()
         if(m->isMaster()) {
             m->getCommunication()->getControlConnection()->
                     sendDefaultAllRunningCommand();
+        }
+    }
+}
+
+void DataBroker::failAllIdleFeedback()
+{
+    for(Module *m : getModules()) {
+        if(m->isMaster()) {
+            m->getCommunication()->getControlConnection()->
+                    sendDefaultFailAllIdleCommand();
+        }
+    }
+}
+
+void DataBroker::failAllReadyFeedback()
+{
+    for(Module *m : getModules()) {
+        if(m->isMaster()) {
+            m->getCommunication()->getControlConnection()->
+                    sendDefaultFailAllReadyCommand();
+        }
+    }
+}
+
+void DataBroker::failAllPausedFeedback()
+{
+    for(Module *m : getModules()) {
+        if(m->isMaster()) {
+            m->getCommunication()->getControlConnection()->
+                    sendDefaultFailAllPausedCommand();
+        }
+    }
+}
+
+void DataBroker::failAllRunningFeedback()
+{
+    for(Module *m : getModules()) {
+        if(m->isMaster()) {
+            m->getCommunication()->getControlConnection()->
+                    sendDefaultFailAllRunningCommand();
         }
     }
 }

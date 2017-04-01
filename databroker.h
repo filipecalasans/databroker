@@ -37,6 +37,11 @@ public:
     void allPausedFeedback();
     void allRunningFeedback();
 
+    void failAllIdleFeedback();
+    void failAllReadyFeedback();
+    void failAllPausedFeedback();
+    void failAllRunningFeedback();
+
     void autostartPlay();
 
 signals:
@@ -71,8 +76,8 @@ private:
     QMap <QString, Module*> modules;
     QString workingDirectoryPath;
 
-    int connectTimeout = 2000, readyTimeout = 1000, startTimeout = 2000, retryTimeout = 5000;
-    QTimer connectTimer, readyTimer, startTimer, retryTimer;
+    int connectTimeout = 2000, readyTimeout = 1000, startTimeout = 2000, retryTimeout = 5000, pauseTimeout = 100;
+    QTimer connectTimer, readyTimer, startTimer, retryTimer, pauseTimer;
 };
 
 #endif // MessageBroker_H

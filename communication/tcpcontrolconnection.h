@@ -35,6 +35,11 @@ public:
     static const QString ALL_RUNNING;
     static const QString ALL_PAUSE;
 
+    static const QString FAIL_ALL_IDLE;
+    static const QString FAIL_ALL_READY;
+    static const QString FAIL_ALL_RUNNING;
+    static const QString FAIL_ALL_PAUSE;
+
     explicit TcpControlConnection(bool masterModule, QObject *parent = 0);
     explicit TcpControlConnection(bool masterModule, const QString& ipAddress,
                                   quint16 portNum, QObject *parent = 0);
@@ -61,6 +66,11 @@ public:
     bool sendDefaultAllReadyCommand();
     bool sendDefaultAllRunningCommand();
     bool sendDefaultAllPausedCommand();
+
+    bool sendDefaultFailAllIdleCommand();
+    bool sendDefaultFailAllReadyCommand();
+    bool sendDefaultFailAllRunningCommand();
+    bool sendDefaultFailAllPausedCommand();
 
     ControlStateType getState() const;
 
