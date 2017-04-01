@@ -1,7 +1,14 @@
 {
    "data_rate": 0,
    "auto_start": false,
-   "master_modules": [ "vision" ],
+   
+    "connect_timeout": 2000,
+    "ready_timeout": 2000,
+    "running_timeout": 2000,
+    "retry_timeout": 2000,
+    "pause_timeout": 2000,
+    "autoconnect_timeout": 3000,
+
    "modules": [
       "vision.json",
       "radio.json",

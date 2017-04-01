@@ -78,6 +78,13 @@ bool DataBroker::loadConfiguration()
     dataRate = configurationObj.value("data_rate").toInt(0);
     autoStart = configurationObj.value("auto_start").toBool(true);
 
+    connectTimeout = configurationObj.value("connect_timeout").toInt(2000);
+    readyTimeout = configurationObj.value("ready_timeout").toInt(2000);
+    runningTimeout = configurationObj.value("running_timeout").toInt(2000);
+    retryTimeout = configurationObj.value("retry_timeout").toInt(2000);
+    pauseTimeout = configurationObj.value("pause_timeout").toInt(2000);
+    autoConnectTimeout = configurationObj.value("autoconnect_timeout").toInt(3000);
+
     QJsonArray modulesJsonArray = configurationObj.value("modules").toArray();
     loadModules(modulesJsonArray);
 
@@ -259,13 +266,13 @@ void DataBroker::appendDataList(Module *fromModule, QStringList *dataList,
 void DataBroker::initTimeoutTimers()
 {
     readyTimer.setInterval(readyTimeout);
-    startTimer.setInterval(startTimeout);
+    runningTimer.setInterval(runningTimeout);
     retryTimer.setInterval(retryTimeout);
     connectTimer.setInterval(connectTimeout);
     pauseTimer.setInterval(pauseTimeout);
 
     readyTimer.setSingleShot(true);
-    startTimer.setSingleShot(true);
+    runningTimer.setSingleShot(true);
     retryTimer.setSingleShot(true);
     connectTimer.setSingleShot(true);
     pauseTimer.setSingleShot(true);
@@ -317,7 +324,7 @@ void DataBroker::initTimeoutTimers()
         }
     });
 
-    connect(&startTimer, &QTimer::timeout, [this](){
+    connect(&runningTimer, &QTimer::timeout, [this](){
         allModulesRunning = areAllMandatoryModulesInState(TcpControlConnection::STATE_RUNNING);
         if(!allModulesRunning) {
             if(autoStart) {
@@ -389,7 +396,7 @@ void DataBroker::startModules()
                 sendDefaultStartCommand();
     }
 
-    startTimer.start();
+    runningTimer.start();
 }
 
 void DataBroker::resetModules()
@@ -424,7 +431,7 @@ void DataBroker::resumeModules()
                 sendDefaultResumeCommand();
     }
 
-    startTimer.start();
+    runningTimer.start();
 }
 
 void DataBroker::allIdleFeedback()

@@ -76,8 +76,15 @@ private:
     QMap <QString, Module*> modules;
     QString workingDirectoryPath;
 
-    int connectTimeout = 2000, readyTimeout = 1000, startTimeout = 2000, retryTimeout = 5000, pauseTimeout = 100;
-    QTimer connectTimer, readyTimer, startTimer, retryTimer, pauseTimer;
+    int connectTimeout = 2000, readyTimeout = 2000;
+    int runningTimeout = 2000, retryTimeout = 5000;
+    int pauseTimeout = 2000, autoConnectTimeout = 2000;
+    QTimer connectTimer, readyTimer;
+    QTimer runningTimer, retryTimer, pauseTimer;
+    QTimer autoConnectTimer;
+
+
+
 };
 
 #endif // MessageBroker_H
