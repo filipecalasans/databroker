@@ -138,12 +138,12 @@ to the config.json file.
 | ---------------------- |:---------------------:| :--------: | :-------: |
 |**data_rate**| Minimum time between data packets in milliseconds (ms) |*Unsigned Integer* | **Yes** - default is 0|
 |**auto_start**| Enable autostart process. If autostart is true the broker will try to go trhough the initialization process automatically until it reaches the **RUNNING** state | *Boolean* | **True** |
-|**connect_timeout**| The broker will wait for **<connect_timeout>** milliseconds before verifing if all the mandatory modules are connected. | *Unsigned Integer* | **No** default - 2000 ms |
-|**ready_timeout**| The broker will wait for **<ready_timeout>** milliseconds before verifing if all the mandatory modules are in **READY** state. | *Unsigned Integer* | **No** - default 2000 ms |
-|**running_timeout**| The broker will wait for **<running_timeout>** milliseconds before verifing if all the mandatory modules are in **RUNNING** state. | *Unsigned Integer* | **No** - default 2000 ms |
-|**pause_timeout**| The broker will wait for **<pause_timeout>** milliseconds before verifing if all the mandatory modules are in **PAUSE** state. | *Unsigned Integer* | **No** - default 2000 ms |
+|**connect_timeout**| The broker will wait for **<connect_timeout>** milliseconds before verifying if all the mandatory modules are connected. | *Unsigned Integer* | **No** default - 2000 ms |
+|**ready_timeout**| The broker will wait for **<ready_timeout>** milliseconds before verifying if all the mandatory modules are in **READY** state. | *Unsigned Integer* | **No** - default 2000 ms |
+|**running_timeout**| The broker will wait for **<running_timeout>** milliseconds before verifying if all the mandatory modules are in **RUNNING** state. | *Unsigned Integer* | **No** - default 2000 ms |
+|**pause_timeout**| The broker will wait for **<pause_timeout>** milliseconds before verifying if all the mandatory modules are in **PAUSE** state. | *Unsigned Integer* | **No** - default 2000 ms |
 |**autoconnect_timeout**| The broker will wait for **<autoconnect_timeout>** milliseconds before trying to connected to the modules. | *Unsigned Integer* | **No** - default 2000 ms |
-|**retry_timeout**| The broker will wait for **<retry_timeout>** milliseconds before retry the autostart process again. | *Unsigned Integer* | **No** - default 2000 ms |
+|**retry_timeout**| The broker will wait for **<retry_timeout>** milliseconds before retrying the autostart process again. | *Unsigned Integer* | **No** - default 2000 ms |
 |**modules**| Path to the module descriptors. Paths are relative to the broker configuration directory. | *Unsigned String* | **No** |
 
 
