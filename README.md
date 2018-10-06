@@ -81,7 +81,7 @@ Following you can see the desciption of each parameter.
 |   **id**               |  Module Identification name. It must be unique. | *String*  - Unique | **No** |
 |   **name**             |  Module name in human readable format. |  *String*| **yes** |
 |   **mandatory**        |  Module must be connected to communication go to the Running state, otherwise it fails to start the communication. | *Boolean* | **Yes** - default value is True |
-|   **description**      |  Module description in human readble format.|  *String* | **Yes** |
+|   **description**      |  Module description in human readable format.|  *String* | **Yes** |
 |   **port_data**        |  Socket port for the Data Channel|  *Unsigned Integer 16-bits* | **No** |
 |   **port_control**     |  Socket port number for the Control Channel | *Unsigned Integer 16-bits*  | **No** | 
 |   **socket_type**      |  Socket type for the Data Channel. Two values possible *"tcp"* or *"udp"* | **String** - "tcp" or "udp" | **Yes**: Default is "udp" | 
@@ -95,7 +95,7 @@ Following you can see the desciption of each parameter.
 | ---------------------- |:---------------------:| :--------: | :-------: |
 |**id**| Data id. must be unique in the given module.|*String*|**No**|
 |**name**| Data name in human readable format.|*String*|**Yes**|
-|**description**| Data description in human readble format.|*String*|**Yes**|
+|**description**| Data description in human readable format.|*String*|**Yes**|
 |**unit**| Data Unit. It may be a pysical unit, such as m, m/s, degrees or something that represent the unit. |*String*|**Yes**|
 
 ### Data Consumed
